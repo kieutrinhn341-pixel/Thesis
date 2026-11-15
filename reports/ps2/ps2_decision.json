@@ -1,0 +1,15 @@
+{
+  "verdict": "Đào sâu",
+  "reason": "thắng ACH-only, chu trình tĩnh và SCC trên test, và cũng thắng trên dev",
+  "delta_hours": 89.0,
+  "delta_rule": "p95 of 16 time-respecting CYCLE attempts closing in dev",
+  "test_main": "54.92% (recall 2.98%, 122 cảnh báo)",
+  "test_ach_only": "0.74% (recall 86.49%, 262,486 cảnh báo)",
+  "test_static_cycles": "43.81% (recall 4.09%, 210 cảnh báo)",
+  "test_same_scc": "10.35% (recall 8.40%, 1,826 cảnh báo)",
+  "dev_main": "43.31% (recall 2.99%, 157 cảnh báo)",
+  "problem_statement_early_signal": "22% precision, ~5% recall (ACH temporal cycles)",
+  "test_cycle_attempts": 25,
+  "test_rule_ceiling_attempts": 5,
+  "truncated_runs": []
+}
