@@ -171,17 +171,6 @@ Tỷ giá được ước tính từ dữ liệu tổng hợp. Với mỗi cặp
 
 Trong mẫu phân tích, trung vị số tiền thanh toán của nhóm rửa tiền cao gấp khoảng 6,6 lần nhóm hợp lệ. Phân phối lệch phải, với giá trị lớn nhất trong mẫu khoảng 16,3 tỷ USD. Bảng sử dụng trung vị và tứ phân vị để mô tả số tiền giao dịch.
 
-### 4.6. Số tiền tròn
-
-| Nhóm giao dịch | Số tiền là bội số của 100 | Số tiền là số nguyên |
-| --- | ---: | ---: |
-| Hợp lệ | 0,012% | 1,207% |
-| Rửa tiền | 0,019% | 1,159% |
-
-![Tỷ lệ giao dịch có số tiền tròn](reports/figures/eda_round_amounts.png)
-
-Các tỷ lệ trên được tính theo đồng tiền thanh toán. Chênh lệch tuyệt đối giữa hai nhóm nhỏ trong thống kê mô tả.
-
 ### 4.7. Phân bố giao dịch theo thời gian
 
 | Kỳ | Số giao dịch | Số giao dịch rửa tiền | Tỷ lệ |
