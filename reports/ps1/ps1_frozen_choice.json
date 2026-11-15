@@ -1,0 +1,66 @@
+{
+  "primary": "fan_in_48h_raw",
+  "primary_b3": "b3_in_raw",
+  "best_by_direction": {
+    "in": "fan_in_48h_raw",
+    "out": "fan_out_48h_raw"
+  },
+  "dev_ap": {
+    "fan_in_24h_raw": 0.031808,
+    "fan_in_24h_peer": 0.029517,
+    "fan_in_48h_raw": 0.032983,
+    "fan_in_48h_peer": 0.030527,
+    "fan_out_24h_raw": 0.01955,
+    "fan_out_24h_peer": 0.017123,
+    "fan_out_48h_raw": 0.024386,
+    "fan_out_48h_peer": 0.021265
+  },
+  "cfg": {
+    "windows_main_h": [
+      24,
+      48
+    ],
+    "windows_sensitivity_h": [
+      96
+    ],
+    "directions": [
+      "in",
+      "out"
+    ],
+    "budgets": [
+      0.001,
+      0.005,
+      0.01
+    ],
+    "seed": 42,
+    "stability_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "activity_bins": 5,
+    "min_peer_size": 100,
+    "min_burst_intervals": 5,
+    "min_positives": 20,
+    "min_budgets_to_win": 2,
+    "candidate_rule": "account with >= 1 ACH transaction (sent or received) in the segment",
+    "positive_rule": "account is sender or receiver of >= 1 laundering transaction of any format (self-loops and duplicates included) in the segment"
+  },
+  "period": {
+    "main_start": "2022-09-01 00:00:00",
+    "dev_end": "2022-09-06 13:00:00",
+    "main_end": "2022-09-11 00:00:00",
+    "data_end": "2022-09-18 16:19:00",
+    "rule": "tail = trailing days with < 5% of the median daily count; dev = first 60% of main-period transactions, floored to the hour; intervals are [start, end)",
+    "source_rows": 5078345
+  },
+  "frozen_at": "2026-11-15T20:25:41",
+  "hash": "369a3997bb05980a"
+}

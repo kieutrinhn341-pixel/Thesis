@@ -1,0 +1,27 @@
+{
+  "verdict": "Điều chỉnh",
+  "reason": "thắng B1 ở 3/3 mức nhưng chỉ thắng B3 ở 0/3 trên test",
+  "primary": "fan_in_48h_raw",
+  "b3": "b3_in_raw",
+  "hash": "369a3997bb05980a",
+  "test_beats_b1_by_budget": {
+    "0.001": true,
+    "0.005": true,
+    "0.01": true
+  },
+  "test_beats_b3_by_budget": {
+    "0.001": false,
+    "0.005": false,
+    "0.01": false
+  },
+  "dev_beats_b1_and_b3_by_budget": {
+    "0.001": false,
+    "0.005": false,
+    "0.01": false
+  },
+  "q1_fan_in_vs_out": "Fan-in tốt nhất (fan_in_48h_raw) AP test = 0.0378; fan-out tốt nhất (fan_out_48h_raw) AP test = 0.0409 → fan-out cho tín hiệu tốt hơn.",
+  "q2_window_vs_b3": "Cửa sổ (fan_in_48h_raw) so với B3 (b3_in_raw) trên test — top 0.1%: 6.41% vs B3 6.41%; top 0.5%: 8.58% vs B3 8.58%; top 1.0%: 8.38% vs B3 8.64%. Thắng B3 ở 0/3 mức.",
+  "q3_burstiness": "Thêm burstiness để phá đồng hạng — top 0.1%: 7.69% vs 6.41%; top 0.5%: 7.81% vs 8.58%; top 1.0%: 6.85% vs 8.38%.",
+  "sensitivity_96h": "fan_in_96h_raw: AP test 0.0387 (so với fan_in_48h_raw: 0.0378)",
+  "note_tail": "tail segment reported only as sensitivity; it is not used for any choice"
+}
