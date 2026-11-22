@@ -13,7 +13,7 @@ Ngân hàng sàng lọc từng giao dịch riêng lẻ và ngập trong cảnh b
 
 Một giao dịch rửa tiền nhìn riêng thì giống giao dịch bình thường. Nhưng để che giấu nguồn gốc, tiền phải đi qua nhiều tài khoản, và việc đó để lại **hình dạng** trong mạng giao dịch.
 
-Khóa luận kiểm tra hai hình dạng: **hub** (tài khoản giao dịch với rất nhiều đối tác) và **loop** (vòng tiền đi qua nhiều tài khoản rồi quay về đúng thứ tự thời gian). Câu hỏi là: các hình dạng này có tìm ra rửa tiền chính xác hơn nhiều so với quy tắc cấp giao dịch không, khi mỗi quy tắc diễn đạt được trong một câu, không đọc nhãn và không dùng học máy?
+Khóa luận kiểm tra hai hình dạng: **hub** (tài khoản giao dịch với rất nhiều đối tác) và **loop** (vòng tiền đi qua nhiều tài khoản rồi quay về đúng thứ tự thời gian). Câu hỏi là: các hình dạng này có tìm ra rửa tiền chính xác hơn nhiều so với quy tắc cấp giao dịch không, khi không đọc nhãn và không dùng học máy?
 
 ## 2. Câu hỏi nghiên cứu
 
@@ -23,7 +23,6 @@ Khóa luận kiểm tra hai hình dạng: **hub** (tài khoản giao dịch vớ
 | **RQ2 · Loops** | Vòng tiền theo đúng thứ tự thời gian có phải tín hiệu rửa tiền chính xác hơn ACH-only, vòng tĩnh và "cùng SCC" không? | PS2 | `04_ps2_hi_small.ipynb` | Có kết quả, cần bổ sung null model, số ring, hình minh họa |
 | **RQ3 · Một ngân hàng** | Một ngân hàng chỉ thấy giao dịch của khách hàng mình thì thấy trọn được bao nhiêu loop? | PS5 (rút gọn) | `04_ps2_hi_small.ipynb` (mục mới) | Chưa làm |
 
-**Ngoài phạm vi** (chỉ nêu ở *Future work*): PS3 (chuỗi chuyển tiếp, tài khoản *money mule*), PS4 (*scatter-gather*), đường cong chia sẻ dữ liệu liên ngân hàng đầy đủ của PS5, học máy và GNN, các bộ HI-Medium và LI.
 
 ## 3. Nguyên tắc chung
 
