@@ -1,0 +1,7 @@
+bước,đồ thị,cách làm,cạnh,tài khoản,ngân hàng
+0,File giao dịch gốc,mỗi dòng CSV một giao dịch,5078345,515088,30470
+1,T: đa đồ thị giao dịch,bỏ self-loop và dòng trùng (notebook 01),4487124,422734,23378
+2,R: đồ thị cặp,gộp các giao dịch cùng cặp gửi → nhận,647939,422734,
+3,T chỉ ACH,giữ giao dịch payment_format = ACH,529446,238922,16280
+4,R chỉ ACH,gộp cặp trong đồ thị con ACH,208522,238922,
+5,Vùng có thể có vòng (ACH),cặp có hai đầu cùng một SCC ≥ 2 tài khoản,7267,6513,

@@ -1,0 +1,32 @@
+key,value,description
+transactions_raw,5078345,Giao dịch trong CSV gốc
+accounts_raw,515088,Tài khoản (khóa số) trong CSV gốc
+bank_codes_string,30528,Mã ngân hàng dạng chuỗi
+banks_raw,30470,Ngân hàng sau khi gộp số 0 đầu
+span_days,17.68,Số ngày quan sát
+laundering_txns,5177,Giao dịch rửa tiền
+laundering_rate_pct,0.1019,Tỷ lệ rửa tiền (%)
+ach_share_of_txns_pct,11.83,ACH / tổng giao dịch (%)
+ach_share_of_laundering_pct,86.59,ACH / giao dịch rửa tiền (%)
+self_loops,591212,Self-loop bị loại
+duplicates_removed,9,Dòng trùng bị loại
+graph_transactions,4487124,Giao dịch đưa vào đồ thị
+dev_end,2022-09-06 13:00:00,Mốc dev / test
+main_end,2022-09-11 00:00:00,Mốc test / đuôi
+dev_txns,3035199,Giao dịch đoạn dev
+dev_laundering,2272,Giao dịch rửa tiền đoạn dev
+test_txns,2042038,Giao dịch đoạn test
+test_laundering,2250,Giao dịch rửa tiền đoạn test
+tail_txns,1108,Giao dịch đoạn tail
+tail_laundering,655,Giao dịch rửa tiền đoạn tail
+all_random_precision_pct,0.1019,"Baseline ngẫu nhiên, all (%)"
+all_ach_alerts,600797,"ACH-only: số cảnh báo, all"
+all_ach_precision_pct,0.7462,"ACH-only: precision, all (%)"
+all_ach_recall_pct,86.59,"ACH-only: recall, all (%)"
+test_random_precision_pct,0.1102,"Baseline ngẫu nhiên, test (%)"
+test_ach_alerts,262486,"ACH-only: số cảnh báo, test"
+test_ach_precision_pct,0.7414,"ACH-only: precision, test (%)"
+test_ach_recall_pct,86.49,"ACH-only: recall, test (%)"
+pattern_attempts,370,Attempt trong Patterns.txt
+pattern_txns,3209,Giao dịch trong Patterns.txt
+pattern_coverage_pct,61.99,Giao dịch rửa tiền thuộc một attempt (%)

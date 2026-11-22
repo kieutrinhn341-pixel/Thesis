@@ -1,0 +1,39 @@
+view,period,scc_size,n_scc
+ACH,cả kỳ,2,2787
+ACH,cả kỳ,3,214
+ACH,cả kỳ,4,19
+ACH,cả kỳ,5,4
+ACH,cả kỳ,6,1
+ACH,cả kỳ,7,2
+ACH,cả kỳ,8,4
+ACH,cả kỳ,9,1
+ACH,cả kỳ,10,3
+ACH,cả kỳ,11,4
+ACH,cả kỳ,12,2
+ACH,cả kỳ,17,1
+ACH,cả kỳ,25,1
+ACH,dev,2,1016
+ACH,dev,3,45
+ACH,dev,4,3
+ACH,dev,5,1
+ACH,dev,6,1
+ACH,dev,7,1
+ACH,dev,10,3
+ACH,test,2,730
+ACH,test,3,22
+ACH,test,4,5
+ACH,test,5,2
+ACH,test,8,1
+ACH,test,9,1
+ACH,test,12,1
+all_formats,cả kỳ,2,2696
+all_formats,cả kỳ,3,200
+all_formats,cả kỳ,4,14
+all_formats,cả kỳ,5,7
+all_formats,cả kỳ,6,2
+all_formats,cả kỳ,7,2
+all_formats,cả kỳ,8,1
+all_formats,cả kỳ,10,1
+all_formats,cả kỳ,11,3
+all_formats,cả kỳ,12,1
+all_formats,cả kỳ,17075,1

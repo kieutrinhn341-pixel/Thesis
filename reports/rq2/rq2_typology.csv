@@ -1,0 +1,4 @@
+segment,flagged_laundering,not_in_any_listed_attempt,CYCLE,GATHER-SCATTER,RANDOM,FAN-IN,FAN-OUT,STACK,SCATTER-GATHER,BIPARTITE
+dev,68,0,25.0,12.0,9.0,7.0,6.0,5.0,4.0,0.0
+test,67,2,18.0,17.0,6.0,5.0,6.0,5.0,5.0,3.0
+tail,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0

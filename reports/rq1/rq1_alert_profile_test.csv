@@ -1,0 +1,9 @@
+direction,entity_type,alerts,in_top_20,positives,median_tx_per_partner,positive_rate_pct
+in,Corporation,565,9,47,1.0,8.31858407079646
+in,Individual,6,0,0,1.0,0.0
+in,Partnership,554,10,47,1.0,8.483754512635379
+in,Sole Proprietorship,438,1,37,1.0,8.447488584474886
+out,Corporation,428,4,34,3.0,7.94392523364486
+out,Individual,1,0,0,1.0,0.0
+out,Partnership,528,9,46,3.0,8.712121212121213
+out,Sole Proprietorship,606,7,41,3.3333333333333335,6.765676567656766

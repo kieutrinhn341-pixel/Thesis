@@ -1,0 +1,78 @@
+{
+  "question": "Một ngân hàng đơn lẻ thấy trọn được bao nhiêu vòng rửa tiền mà RQ2 tìm thấy?",
+  "test_ach_all_loops": {
+    "view": "ACH",
+    "segment": "test",
+    "group": "mọi vòng",
+    "loops": 40,
+    "one_bank_sees_all": "5/40 (12%)",
+    "best_coverage_median": 0.6666666666666666,
+    "min_banks_1": 5,
+    "min_banks_2": 33,
+    "min_banks_3plus": 2,
+    "banks_per_loop": "2–3–5"
+  },
+  "test_ach_fully_laundering": {
+    "view": "ACH",
+    "segment": "test",
+    "group": "toàn rửa tiền",
+    "loops": 19,
+    "one_bank_sees_all": "3/19 (16%)",
+    "best_coverage_median": 0.6666666666666666,
+    "min_banks_1": 3,
+    "min_banks_2": 16,
+    "min_banks_3plus": 0,
+    "banks_per_loop": "2–3–5"
+  },
+  "test_ach_no_laundering": {
+    "view": "ACH",
+    "segment": "test",
+    "group": "không rửa tiền",
+    "loops": 17,
+    "one_bank_sees_all": "1/17 (6%)",
+    "best_coverage_median": 0.6666666666666666,
+    "min_banks_1": 1,
+    "min_banks_2": 16,
+    "min_banks_3plus": 0,
+    "banks_per_loop": "2–3–4"
+  },
+  "dev_ach_fully_laundering": {
+    "view": "ACH",
+    "segment": "dev",
+    "group": "toàn rửa tiền",
+    "loops": 18,
+    "one_bank_sees_all": "1/18 (6%)",
+    "best_coverage_median": 0.6666666666666666,
+    "min_banks_1": 1,
+    "min_banks_2": 16,
+    "min_banks_3plus": 1,
+    "banks_per_loop": "2–3–5"
+  },
+  "test_all_formats_fully_laundering": {
+    "view": "ALL",
+    "segment": "test",
+    "group": "toàn rửa tiền",
+    "loops": 19,
+    "one_bank_sees_all": "3/19 (16%)",
+    "best_coverage_median": 0.6666666666666666,
+    "min_banks_1": 3,
+    "min_banks_2": 16,
+    "min_banks_3plus": 0,
+    "banks_per_loop": "2–3–5"
+  },
+  "test_rings": [
+    {
+      "segment": "test",
+      "laundering_ring": false,
+      "rings": 16,
+      "seen_by_one_bank": 1
+    },
+    {
+      "segment": "test",
+      "laundering_ring": true,
+      "rings": 4,
+      "seen_by_one_bank": 2
+    }
+  ],
+  "note": "Kết quả sơ bộ trên số ít vòng (vài chục vòng, vài ring); không có tham số nào được chọn."
+}

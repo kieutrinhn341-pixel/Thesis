@@ -1,0 +1,6 @@
+metric,all_formats,ACH,ACH_share_pct
+accounts,422734,238922,56.52
+banks,23378,16280,69.64
+transactions,4487124,529446,11.8
+unique_directed_pairs,647939,208522,32.18
+parallel_edge_count,3839185,320924,8.36

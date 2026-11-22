@@ -1,0 +1,41 @@
+view,direction,rank,node_id,account_key,entity_type,degree,n_tx,tx_per_partner,formats
+all_formats,in,1,410627,70_100428660,Sole Proprietorship,545,0,0.0,Cash 100%
+all_formats,in,2,410628,70_1004286A8,Partnership,328,0,0.0,Cash 100%
+all_formats,in,3,180310,21611_8051A3FA0,Corporation,93,94,1.010752688172043,ACH 100%
+all_formats,in,4,394274,4726_808FAF7C0,Partnership,89,89,1.0,ACH 100%
+all_formats,in,5,95213,14277_80B847A90,Corporation,84,84,1.0,ACH 100%
+all_formats,in,6,73156,13145_80640B300,Sole Proprietorship,82,82,1.0,ACH 100%
+all_formats,in,7,170479,213005_8050E2560,Partnership,82,82,1.0,ACH 100%
+all_formats,in,8,274563,2915_801AF5660,Sole Proprietorship,82,82,1.0,ACH 100%
+all_formats,in,9,380874,39678_80F523260,Corporation,82,82,1.0,ACH 100%
+all_formats,in,10,410418,7042_80640FE10,Partnership,82,82,1.0,ACH 100%
+all_formats,out,1,410627,70_100428660,Sole Proprietorship,14230,0,0.0,"Cheque 49%, Credit Card 31%, Cash 20%"
+all_formats,out,2,410628,70_1004286A8,Partnership,8846,0,0.0,"Cheque 49%, Credit Card 31%, Cash 20%"
+all_formats,out,3,410638,70_100428978,Sole Proprietorship,1776,0,0.0,"Cheque 49%, Credit Card 30%, Cash 21%"
+all_formats,out,4,410629,70_1004286F0,Partnership,1575,0,0.0,"Cheque 50%, Credit Card 30%, Cash 21%"
+all_formats,out,5,410639,70_1004289C0,Sole Proprietorship,1432,0,0.0,"Cheque 49%, Credit Card 30%, Cash 21%"
+all_formats,out,6,410631,70_100428780,Sole Proprietorship,1421,0,0.0,"Cheque 48%, Credit Card 31%, Cash 21%"
+all_formats,out,7,410633,70_100428810,Sole Proprietorship,1394,0,0.0,"Cheque 49%, Credit Card 30%, Cash 21%"
+all_formats,out,8,410632,70_1004287C8,Corporation,1182,0,0.0,"Cheque 49%, Credit Card 32%, Cash 20%"
+all_formats,out,9,410641,70_100428A51,Country,1147,0,0.0,Bitcoin 100%
+all_formats,out,10,410630,70_100428738,Corporation,1136,0,0.0,"Cheque 48%, Credit Card 31%, Cash 21%"
+ACH,in,1,180310,21611_8051A3FA0,Corporation,93,94,1.010752688172043,ACH 100%
+ACH,in,2,394274,4726_808FAF7C0,Partnership,89,89,1.0,ACH 100%
+ACH,in,3,95213,14277_80B847A90,Corporation,84,84,1.0,ACH 100%
+ACH,in,4,73156,13145_80640B300,Sole Proprietorship,82,82,1.0,ACH 100%
+ACH,in,5,170479,213005_8050E2560,Partnership,82,82,1.0,ACH 100%
+ACH,in,6,274563,2915_801AF5660,Sole Proprietorship,82,82,1.0,ACH 100%
+ACH,in,7,380874,39678_80F523260,Corporation,82,82,1.0,ACH 100%
+ACH,in,8,410418,7042_80640FE10,Partnership,82,82,1.0,ACH 100%
+ACH,in,9,63463,1292_8003946A0,Partnership,80,80,1.0,ACH 100%
+ACH,in,10,66325,12_800326F20,Corporation,80,80,1.0,ACH 100%
+ACH,out,1,411842,7548_8040AE4F0,Partnership,17,17,1.0,ACH 100%
+ACH,out,2,421929,9679_80452D470,Sole Proprietorship,17,26,1.5294117647058822,"ACH 46%, Cash 18%, Cheque 18%"
+ACH,out,3,57947,1267_8007C7660,Corporation,16,16,1.0,ACH 100%
+ACH,out,4,162848,210431_809BFD6B0,Corporation,16,16,1.0,"ACH 80%, Cheque 10%, Credit Card 10%"
+ACH,out,5,166006,21174_800737690,Sole Proprietorship,16,16,1.0,ACH 100%
+ACH,out,6,172944,213952_808338D40,Partnership,16,16,1.0,"ACH 43%, Credit Card 19%, Cheque 19%"
+ACH,out,7,175291,214615_8075AC7C0,Partnership,16,25,1.5625,"ACH 71%, Cheque 29%"
+ACH,out,8,175762,214749_805DB7F20,Partnership,16,16,1.0,"Cheque 40%, ACH 37%, Wire 23%"
+ACH,out,9,180313,21611_8051B3BF0,Corporation,16,17,1.0625,ACH 100%
+ACH,out,10,182451,21749_80154AAF0,Partnership,16,17,1.0625,ACH 100%

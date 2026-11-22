@@ -1,0 +1,4 @@
+segment,candidates,positive_candidates,positive_accounts_all,prevalence_pct,transactions,laundering_tx
+dev,209931,2894,3144,1.3785481896432636,3035199,2272
+test,156284,2767,3008,1.770494740344501,2042038,2250
+tail,716,715,715,99.86033519553072,1108,655

@@ -1,0 +1,3 @@
+segment,loops,rings,fully_laundering_loops,rings_with_fully_laundering,top2_rings_share_of_fully_laundering,rings_only_no_laundering
+dev,48,33,18,5,0.8333333333333334,27
+test,40,20,19,4,0.8947368421052632,13

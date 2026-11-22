@@ -1,0 +1,32 @@
+{
+  "verdict": "Đào sâu",
+  "reason": "thắng ACH-only, vòng tĩnh và SCC trên test, và cũng thắng trên dev",
+  "delta_hours": 89.0,
+  "delta_rule": "p95 của 16 attempt CYCLE tôn trọng thời gian đóng vòng trong dev",
+  "test_main": "54.92% (recall 2.98%, 122 cảnh báo)",
+  "test_ach_only": "0.74% (recall 86.49%, 262,486 cảnh báo)",
+  "test_static_cycles": "43.81% (recall 4.09%, 210 cảnh báo)",
+  "test_same_scc": "10.35% (recall 8.40%, 1,826 cảnh báo)",
+  "dev_main": "43.31% (recall 2.99%, 157 cảnh báo)",
+  "test_cycle_attempts": 25,
+  "test_rule_ceiling_attempts": 5,
+  "time_shuffle_null_test": {
+    "segment": "test",
+    "static_loops_3_6": 81,
+    "observed_time_ordered": 40,
+    "null_mean": 35.54,
+    "null_p95": 45.0,
+    "null_max": 49,
+    "p_value": 0.188
+  },
+  "rings_test": {
+    "segment": "test",
+    "loops": 40,
+    "rings": 20,
+    "fully_laundering_loops": 19,
+    "rings_with_fully_laundering": 4,
+    "top2_rings_share_of_fully_laundering": 0.895,
+    "rings_only_no_laundering": 13
+  },
+  "truncated_runs": []
+}

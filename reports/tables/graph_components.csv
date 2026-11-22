@@ -1,0 +1,9 @@
+view,period,connectivity,accounts_considered,components,nontrivial_components,accounts_in_nontrivial,largest_component
+all_formats,cả kỳ,strong,422734,402415,2928,23247,17075
+all_formats,cả kỳ,weak,422734,21785,21785,422734,372089
+ACH,cả kỳ,strong,238922,235452,3043,6513,25
+ACH,cả kỳ,weak,238922,50331,50331,238922,23653
+ACH,dev,strong,209931,208774,1070,2227,10
+ACH,dev,weak,209931,53036,53036,209931,7307
+ACH,test,strong,156284,155461,762,1585,12
+ACH,test,weak,156284,45450,45450,156284,593

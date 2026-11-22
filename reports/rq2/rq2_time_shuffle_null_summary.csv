@@ -1,0 +1,3 @@
+segment,static_loops_3_6,observed_time_ordered,null_mean,null_p95,null_max,p_value
+dev,100,48,40.72,48.05,56,0.07920792079207921
+test,81,40,35.54,45.0,49,0.18811881188118812

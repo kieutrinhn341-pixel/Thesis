@@ -1,0 +1,80 @@
+{
+  "primary": "fan_in_48h_raw",
+  "hash": "369a3997bb05980a",
+  "verdict": "Điều chỉnh",
+  "reason": "thắng B1 ở 3/3 mức nhưng chỉ thắng B3 ở 0/3 trên test",
+  "by_direction": {
+    "in": {
+      "variant": "fan_in_48h_raw",
+      "b3": "b3_in_raw",
+      "verdict": "Điều chỉnh",
+      "reason": "thắng B1 ở 3/3 mức nhưng chỉ thắng B3 ở 0/3 trên test",
+      "test_beats_b1_by_budget": {
+        "0.001": true,
+        "0.005": true,
+        "0.01": true
+      },
+      "test_beats_b3_by_budget": {
+        "0.001": false,
+        "0.005": false,
+        "0.01": false
+      },
+      "test_precision_expected": {
+        "0.001": 0.0641,
+        "0.005": 0.0839,
+        "0.01": 0.0859
+      },
+      "test_b3_precision_expected": {
+        "0.001": 0.0641,
+        "0.005": 0.0858,
+        "0.01": 0.0878
+      },
+      "test_overlap_with_b3": {
+        "0.001": 1.0,
+        "0.005": 0.997,
+        "0.01": 0.994
+      }
+    },
+    "out": {
+      "variant": "fan_out_48h_raw",
+      "b3": "b3_out_raw",
+      "verdict": "Điều chỉnh",
+      "reason": "thắng B1 ở 3/3 mức nhưng chỉ thắng B3 ở 0/3 trên test",
+      "test_beats_b1_by_budget": {
+        "0.001": true,
+        "0.005": true,
+        "0.01": true
+      },
+      "test_beats_b3_by_budget": {
+        "0.001": false,
+        "0.005": false,
+        "0.01": false
+      },
+      "test_precision_expected": {
+        "0.001": 0.315,
+        "0.005": 0.1139,
+        "0.01": 0.0813
+      },
+      "test_b3_precision_expected": {
+        "0.001": 0.3332,
+        "0.005": 0.1206,
+        "0.01": 0.0869
+      },
+      "test_overlap_with_b3": {
+        "0.001": 0.987,
+        "0.005": 0.969,
+        "0.01": 0.964
+      }
+    }
+  },
+  "answers": {
+    "fan_in_vs_fan_out": "top 0.1%: fan-in 6.41%, fan-out 31.50%; top 0.5%: fan-in 8.39%, fan-out 11.39%; top 1.0%: fan-in 8.59%, fan-out 8.13% (AP test: fan-in 0.0378, fan-out 0.0409)",
+    "window_vs_b3": {
+      "in": "top 0.1%: 6.41% vs B3 6.41%; top 0.5%: 8.39% vs B3 8.58%; top 1.0%: 8.59% vs B3 8.78%",
+      "out": "top 0.1%: 31.50% vs B3 33.32%; top 0.5%: 11.39% vs B3 12.06%; top 1.0%: 8.13% vs B3 8.69%"
+    },
+    "burstiness_tie_break": "top 0.1%: 6.41% vs 6.41%; top 0.5%: 8.07% vs 8.39%; top 1.0%: 8.45% vs 8.59%",
+    "window_96h": "fan_in_96h_raw: AP test 0.0387; fan_out_96h_raw: AP test 0.0440"
+  },
+  "note_tail": "tail segment reported only as sensitivity; it is not used for any choice"
+}

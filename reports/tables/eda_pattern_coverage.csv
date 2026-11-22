@@ -1,0 +1,6 @@
+payment_format,laundering_txns,in_attempt,not_in_attempt,in_attempt_pct
+ACH,4483,3208,1275,71.55922373410662
+Cheque,324,0,324,0.0
+Credit Card,206,0,206,0.0
+Cash,108,0,108,0.0
+Bitcoin,56,1,55,1.7857142857142858

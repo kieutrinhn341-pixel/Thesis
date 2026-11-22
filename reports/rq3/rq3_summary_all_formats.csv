@@ -1,0 +1,7 @@
+view,segment,group,loops,one_bank_sees_all,best_coverage_median,min_banks_1,min_banks_2,min_banks_3plus,banks_per_loop
+ALL,dev,mọi vòng,55,4/55 (7%),0.6666666666666666,4,47,4,2–3–6
+ALL,dev,toàn rửa tiền,18,1/18 (6%),0.6666666666666666,1,16,1,2–3–5
+ALL,dev,không rửa tiền,35,2/35 (6%),0.6666666666666666,2,31,2,2–3–5
+ALL,test,mọi vòng,41,5/41 (12%),0.6666666666666666,5,34,2,2–3–5
+ALL,test,toàn rửa tiền,19,3/19 (16%),0.6666666666666666,3,16,0,2–3–5
+ALL,test,không rửa tiền,17,1/17 (6%),0.6666666666666666,1,16,0,2–3–4

@@ -1,0 +1,19 @@
+view,segment,cycle_id,length,group,banks_seeing_all,n_banks,intra_bank,ring
+ACH,dev,1086,3,lẫn,148350,2,False,105153
+ACH,dev,1088,3,toàn rửa tiền,148350,2,False,105153
+ACH,dev,1092,3,không rửa tiền,3514,2,False,108435
+ACH,dev,1128,3,không rửa tiền,211,2,False,166725
+ACH,test,744,3,toàn rửa tiền,118,2,False,211692
+ACH,test,763,4,toàn rửa tiền,222,3,False,211692
+ACH,test,793,3,không rửa tiền,27,2,False,72234
+ACH,test,800,3,toàn rửa tiền,148350,2,False,105153
+ACH,test,802,3,lẫn,148350,2,False,105153
+ALL,dev,1179,3,lẫn,148350,2,False,105153
+ALL,dev,1181,3,toàn rửa tiền,148350,2,False,105153
+ALL,dev,1185,3,không rửa tiền,3514,2,False,108435
+ALL,dev,1229,3,không rửa tiền,211,2,False,166725
+ALL,test,801,3,toàn rửa tiền,118,2,False,211692
+ALL,test,820,4,toàn rửa tiền,222,3,False,211692
+ALL,test,851,3,không rửa tiền,27,2,False,72234
+ALL,test,858,3,toàn rửa tiền,148350,2,False,105153
+ALL,test,860,3,lẫn,148350,2,False,105153
