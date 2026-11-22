@@ -1,6 +1,7 @@
 # Hubs and Loops: phát hiện rửa tiền bằng quy tắc đồ thị trên IBM AML HI-Small
 
 **Tên đề tài:** Tài khoản trung tâm và vòng tiền khép kín: phát hiện rửa tiền bằng các quy tắc đồ thị có thể giải thích trên mạng giao dịch IBM HI-Small
+
 **English title:** *Hubs and Loops: Explainable Graph Rules for Anti-Money Laundering on the IBM HI-Small Transaction Network*
 Khóa luận tốt nghiệp K65 · Nguyễn Thị Kiều Trinh
 
