@@ -19,9 +19,9 @@ Khóa luận kiểm tra hai hình dạng: **hub** (tài khoản giao dịch vớ
 
 | RQ | Câu hỏi | Bài toán gốc | Notebook | Trạng thái |
 |---|---|---|---|---|
-| **RQ1 · Hubs** | Rửa tiền có tập trung ở tài khoản nhận tiền từ (*fan-in*) hoặc chuyển tiền cho (*fan-out*) rất nhiều đối tác trong thời gian ngắn không? Cửa sổ thời gian có thêm thông tin so với bậc (*degree*) thông thường không? | PS1 | `03_ps1_hi_small.ipynb` | Có kết quả, cần diễn giải lại (mục 9.1) |
-| **RQ2 · Loops** | Vòng tiền theo đúng thứ tự thời gian có phải tín hiệu rửa tiền chính xác hơn ACH-only, vòng tĩnh và "cùng SCC" không? | PS2 | `04_ps2_hi_small.ipynb` | Có kết quả, cần bổ sung null model, số ring, hình minh họa |
-| **RQ3 · Một ngân hàng** | Một ngân hàng chỉ thấy giao dịch của khách hàng mình thì thấy trọn được bao nhiêu loop? | PS5 (rút gọn) | `04_ps2_hi_small.ipynb` (mục mới) | Chưa làm |
+| **RQ1 · Hubs** | Rửa tiền có tập trung ở tài khoản nhận tiền từ (*fan-in*) hoặc chuyển tiền cho (*fan-out*) rất nhiều đối tác trong thời gian ngắn không? Cửa sổ thời gian có thêm thông tin so với bậc (*degree*) thông thường không? | PS1 | `03_ps1_hi_small.ipynb`|
+| **RQ2 · Loops** | Vòng tiền theo đúng thứ tự thời gian có phải tín hiệu rửa tiền chính xác hơn ACH-only, vòng tĩnh và "cùng SCC" không? | PS2 | `04_ps2_hi_small.ipynb` | 
+| **RQ3 · Một ngân hàng** | Một ngân hàng chỉ thấy giao dịch của khách hàng mình thì thấy trọn được bao nhiêu loop? | PS5 (rút gọn) | `04_ps2_hi_small.ipynb` (mục mới) | 
 
 
 ## 3. Nguyên tắc chung
