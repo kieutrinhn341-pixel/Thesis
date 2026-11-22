@@ -1,42 +1,81 @@
-# Graph Analysis for Anti-Money Laundering
-## Data
-The data can be found online using the following link:
-  - [IBM Transactions for Anti Money Laundering (AML)](https://www.kaggle.com/datasets/ealtman2019/ibm-transactions-for-anti-money-laundering-aml)
+# Hubs and Loops: phát hiện rửa tiền bằng quy tắc đồ thị trên IBM AML HI-Small
 
-The data is generated using a multi-agent virtual world model. All of the agents in the virtual world have actions governed by statistical distributions. Thus the model and data are NOT based on obfuscating or anonymizing real individuals. Everything is synthetic. More specifically the underlying model uses a virtual world of banks, individuals, and companies -- with individuals and companies buying items, and doing bank transfers to make payments, get supplies, pay salaries, etc. The underlying model has good and bad actors, with bad actors doing things like smuggling, extortion, illegal gambling, etc. The bad actors sometimes attempt to launder ill-gotten funds resulting in money-laundering transactions.
+**Tên đề tài:** Tài khoản trung tâm và vòng tiền khép kín: phát hiện rửa tiền bằng các quy tắc đồ thị có thể giải thích trên mạng giao dịch IBM HI-Small
+**English title:** *Hubs and Loops: Explainable Graph Rules for Anti-Money Laundering on the IBM HI-Small Transaction Network*
 
-**Variant used**: HI-Small — HI = higher illicit ratio, Small = smallest of three sizes
-- `HI-Small_Trans.csv` contains individual transactions, including the Timestamp,From Bank,Account,To Bank,Account,Amount Received,Receiving Currency,
-Amount Paid,Payment Currency,Payment Format,Is Laundering
-- `HI-Small_Patterns.txt` groups a subset of labelled transactions into
-  simulated laundering patterns
+Khóa luận tốt nghiệp K65 · Nguyễn Thị Kiều Trinh
+
+> **Trạng thái:** các con số trong README lấy từ lần chạy notebook ngày 15/11/2026 (`reports/`). Sau khi đóng băng, mọi số liệu cuối cùng nằm trong `reports/results_final.csv`, và khóa luận chỉ chép số từ file đó.
+
 ---
-### HI-Small_Trans
+
+## 1. Phát biểu vấn đề
+
+Ngân hàng sàng lọc từng giao dịch riêng lẻ và ngập trong cảnh báo. Trong bộ dữ liệu này, quy tắc đơn giản nhất có ý nghĩa là "gắn cờ mọi giao dịch ACH". Trên đoạn kiểm thử dài 4,5 ngày, quy tắc đó tạo ra **262.486 cảnh báo** nhưng chỉ **0,74%** là rửa tiền.
+
+Một giao dịch rửa tiền nhìn riêng thì giống giao dịch bình thường. Nhưng để che giấu nguồn gốc, tiền phải đi qua nhiều tài khoản, và việc đó để lại **hình dạng** trong mạng giao dịch.
+
+Khóa luận kiểm tra hai hình dạng: **hub** (tài khoản giao dịch với rất nhiều đối tác) và **loop** (vòng tiền đi qua nhiều tài khoản rồi quay về đúng thứ tự thời gian). Câu hỏi là: các hình dạng này có tìm ra rửa tiền chính xác hơn nhiều so với quy tắc cấp giao dịch không, khi mỗi quy tắc diễn đạt được trong một câu, không đọc nhãn và không dùng học máy?
+
+## 2. Câu hỏi nghiên cứu
+
+| RQ | Câu hỏi | Bài toán gốc | Notebook | Trạng thái |
+|---|---|---|---|---|
+| **RQ1 · Hubs** | Rửa tiền có tập trung ở tài khoản nhận tiền từ (*fan-in*) hoặc chuyển tiền cho (*fan-out*) rất nhiều đối tác trong thời gian ngắn không? Cửa sổ thời gian có thêm thông tin so với bậc (*degree*) thông thường không? | PS1 | `03_ps1_hi_small.ipynb` | Có kết quả, cần diễn giải lại (mục 9.1) |
+| **RQ2 · Loops** | Vòng tiền theo đúng thứ tự thời gian có phải tín hiệu rửa tiền chính xác hơn ACH-only, vòng tĩnh và "cùng SCC" không? | PS2 | `04_ps2_hi_small.ipynb` | Có kết quả, cần bổ sung null model, số ring, hình minh họa |
+| **RQ3 · Một ngân hàng** | Một ngân hàng chỉ thấy giao dịch của khách hàng mình thì thấy trọn được bao nhiêu loop? | PS5 (rút gọn) | `04_ps2_hi_small.ipynb` (mục mới) | Chưa làm |
+
+**Ngoài phạm vi** (chỉ nêu ở *Future work*): PS3 (chuỗi chuyển tiếp, tài khoản *money mule*), PS4 (*scatter-gather*), đường cong chia sẻ dữ liệu liên ngân hàng đầy đủ của PS5, học máy và GNN, các bộ HI-Medium và LI.
+
+## 3. Nguyên tắc chung
+
+1. **Tách nhãn.** Đồ thị và mọi quy tắc được tính khi chưa đọc cột `Is Laundering`. Nhãn chỉ được ghép vào ở bước chấm điểm.
+2. **Không học máy.** Tín hiệu chỉ đến từ cấu trúc đồ thị: ai trả cho ai, theo thứ tự nào, bao nhiêu.
+3. **Phải vượt baseline.** Quy tắc chỉ có giá trị khi vượt baseline ngẫu nhiên và baseline **ACH-only**, ở cùng đơn vị đánh giá, cùng tập đánh giá và cùng ngân sách cảnh báo.
+   - Trên cả file gốc: ngẫu nhiên 0,102%; ACH-only 0,746%, bắt được 86,6% giao dịch rửa tiền.
+   - Trên đoạn test: ngẫu nhiên 0,110%; ACH-only 0,741%, bắt được 86,5%.
+4. **Chọn trên dev, chấm trên test.** Mọi lựa chọn (biến thể PS1, ngưỡng δ của PS2) được chốt trên dev và lưu kèm mã hash trước khi tính bất kỳ số nào trên test.
+
+## 4. Dữ liệu
+
+Nguồn: [IBM Transactions for Anti Money Laundering (AML)](https://www.kaggle.com/datasets/ealtman2019/ibm-transactions-for-anti-money-laundering-aml), mô tả trong Altman et al. (2023). Đây là dữ liệu **tổng hợp**: một thế giới ảo gồm ngân hàng, cá nhân và doanh nghiệp mua bán, trả lương, chuyển khoản; một số tác nhân xấu rửa tiền thu được từ hoạt động phi pháp. Không có dữ liệu của người thật.
+
+Bản dùng: **HI-Small** (HI = tỷ lệ rửa tiền cao hơn, Small = cỡ nhỏ nhất trong ba cỡ).
+
+| File | Nội dung | Dùng ở |
+|---|---|---|
+| `HI-Small_Trans.csv` | 5.078.345 giao dịch, 11 cột | Mọi notebook |
+| `HI-Small_Patterns.txt` | 370 lần rửa tiền (*attempt*) theo 8 kiểu, gồm 3.209 giao dịch | Chỉ để chấm điểm, và để hiệu chỉnh δ trên dev (nb 04) |
+| `HI-Small_accounts.csv` | Loại chủ thể của tài khoản (công ty hợp danh, công ty, hộ kinh doanh…) | Nhóm đối chiếu và hồ sơ cảnh báo của PS1 (nb 03) |
+
+### 4.1. Các cột của `HI-Small_Trans.csv`
 
 | Cột gốc | Tên trong notebook | Ý nghĩa | Cách đọc |
 |---|---|---|---|
 | Timestamp | `timestamp` | Thời điểm, chính xác tới **phút** | `%Y/%m/%d %H:%M` |
-| From Bank | `from_bank` | Mã ngân hàng gửi | chuỗi, giữ số 0 đầu; thêm `from_bank_id` dạng số |
-| Account | `from_acct` | Số tài khoản gửi (hex) | chuỗi |
-| To Bank | `to_bank` | Mã ngân hàng nhận | như trên |
-| Account | `to_acct` | Số tài khoản nhận | chuỗi |
-| Amount Received | `amt_received` | Số tiền nhận, theo tiền tệ nhận | giữ thêm chuỗi gốc |
+| From Bank | `from_bank` | Mã ngân hàng gửi | Đọc dạng chuỗi; thêm `from_bank_id` dạng số |
+| Account | `from_acct` | Số tài khoản gửi (hệ 16) | Chuỗi |
+| To Bank | `to_bank` | Mã ngân hàng nhận | Như trên |
+| Account | `to_acct` | Số tài khoản nhận | Chuỗi |
+| Amount Received | `amt_received` | Số tiền nhận, theo tiền tệ nhận | Giữ thêm chuỗi gốc |
 | Receiving Currency | `recv_ccy` | 15 loại tiền tệ | |
-| Amount Paid | `amt_paid` | Số tiền trả, theo tiền tệ trả | giữ thêm chuỗi gốc |
+| Amount Paid | `amt_paid` | Số tiền trả, theo tiền tệ trả | Giữ thêm chuỗi gốc |
 | Payment Currency | `pay_ccy` | | |
 | Payment Format | `payment_format` | ACH, Cheque, Credit Card, Cash, Wire, Bitcoin, Reinvestment | |
-| Is Laundering | `is_laundering` | 1 = rửa tiền | **chỉ dùng khi đánh giá** |
-## Eight Laundering Pattern Types in the Dataset
-- **Fan-Out**: One account distributes funds to many recipients simultaneously. Characteristic of placement — converting cash into the financial system through many small transfers.
-- **Fan-In**: Many accounts funnel funds into one. Characteristic of integration — consolidating laundered money before final extraction.
-- **Cycle**: Money moves through a chain of accounts and returns to the origin. Characteristic of layering — obscuring the money trail through circular transfers.
-- **Stack**: Sequential chain transfers, each slightly reducing the amount. Designed to break the audit trail across multiple hops.
-- **Bipartite**: Two groups of accounts transact exclusively between each other in an alternating pattern.
-- **Gather-Scatter**: Funds collected from many sources, held briefly, then redistributed — a combination of fan-in and fan-out.
-- **Scatter-Gather**: Funds distributed to intermediaries, which then all send to a single destination.
-- **Random**: Multi-hop chains with random intermediate accounts, designed to evade pattern-matching rules.
+| Is Laundering | `is_laundering` | 1 = rửa tiền | **Chỉ dùng khi chấm điểm** |
 
-| Typology | Số attempt | Số giao dịch | Giao dịch / attempt |
+### 4.2. Tám kiểu rửa tiền trong `Patterns.txt`
+
+- **FAN-OUT:** một tài khoản chuyển tiền cho nhiều tài khoản nhận.
+- **FAN-IN:** nhiều tài khoản cùng chuyển tiền về một tài khoản.
+- **GATHER-SCATTER:** gom từ nhiều nguồn về một tài khoản, rồi phân tán đi nhiều nơi.
+- **SCATTER-GATHER:** chia từ một tài khoản qua nhiều trung gian, rồi các trung gian cùng chuyển về một đích.
+- **CYCLE:** tiền đi qua một chuỗi tài khoản và quay về tài khoản ban đầu.
+- **STACK:** nhiều lớp chuyển tiếp nối tiếp nhau.
+- **BIPARTITE:** hai nhóm tài khoản chuyển tiền qua lại giữa nhau.
+- **RANDOM:** chuỗi nhiều bước qua các tài khoản trung gian ngẫu nhiên.
+
+| Kiểu | Số attempt | Số giao dịch | Giao dịch / attempt |
 |---|---:|---:|---:|
 | GATHER-SCATTER | 51 | 716 | 14,0 |
 | SCATTER-GATHER | 44 | 626 | 14,2 |
@@ -48,98 +87,109 @@ Amount Paid,Payment Currency,Payment Format,Is Laundering
 | RANDOM | 41 | 191 | 4,7 |
 | **Tổng** | **370** | **3.209** | |
 
-- Cả 3.209/3.209 dòng trong file pattern đều ghép được với giao dịch trong file chính. Tuy nhiên chúng chỉ chiếm **62,0%** trong 5.177 giao dịch rửa tiền. 38% còn lại có nhãn 1 nhưng không thuộc attempt nào được liệt kê. 
----
+Cả 3.209 dòng của file pattern đều ghép được với giao dịch trong file chính, nhưng chỉ chiếm **62,0%** trong 5.177 giao dịch rửa tiền. 38% còn lại mang nhãn 1 mà không thuộc attempt nào. Vì vậy recall theo pattern luôn thấp hơn recall theo nhãn.
 
-## Problem Statements
-**Ground rules**
-1. The graph is built without the Is Laundering label. The label is only used at the end, to score the rules.
-2. No machine learning. Detection comes from graph structure (who pays whom, in which order, how much).
-3. A rule only counts if it beats two non-graph baselines: random (0.10 % laundering) and “ACH format only” (0.72 %, ≈ 7×, covers 85 % of laundering).
+## 5. Chạy 
 
-**PS1: Fan-in / fan-out “smurfing” hubs**
-- **Question**: Is laundering concentrated in accounts that collect money from, or spread it   to, unusually many counterparties in a short time?
-- **Why**: This is the classic collection/distribution typology (FAN-IN, FAN-OUT, GATHER-SCATTER): many small senders feed one collector, or one account sprays money out.
-- **Graph method**: Count distinct counterparties per account in 24–48 h windows, add a burstiness measure, then rank accounts against their peers.
-- **Early signal**: Top 0.1–1 % of ACH accounts by degree: 7–25 % are laundering accounts, vs 2.3 % for ACH accounts overall (3–11×).
-  
-**PS2: Round-tripping: time-ordered money cycles**
-- **Question**: When money leaves an account and comes back to it through a loop of other accounts, in time order, is that laundering?
-- **Why**: The CYCLE typology: funds go round a loop and return to their origin looking “clean”. It is the core of the layering stage.
-- **Graph method**: Find strongly connected components, enumerate cycles of length 3–6 (Johnson's algorithm), and keep only time-respecting cycles (each hop happens after the previous one).
-- **Early signal**: Transactions on time-respecting ACH cycles are 22 % laundering (≈ 218× random, 30× the ACH baseline). Recall is only about 5 %, so the rule is precise but narrow.
+### 5.1. Thứ tự
 
-**PS3: Layering chains and pass-through (mule) accounts**
-- **Question**: Can we trace money that passes quickly through a chain of intermediary accounts while keeping most of its amount?
-- **Why**: Chain/STACK typologies and money mules: an account receives money and forwards almost the same amount within hours, so it is a pipe, not a wallet.
-- **Graph method**: Match each outflow to a recent inflow (within 72 h, keeping 80–100 % of the amount), then link the matched hops into time-respecting paths.
-- **Early signal**: Pass-through ACH transfers are 4.0 % laundering (≈ 40× random, 5.5× the ACH baseline), with recall about 7 %. Whether longer chains are more suspicious is not yet tested.
+| Bước | Notebook | Đọc | Ghi ra |
+|---|---|---|---|
+| 1 | `Notebook/01_eda_hi_small.ipynb` | CSV giao dịch, file pattern | `reports/tables/`, `reports/figures/`, `analysis_period.json`, `data/processed/hi_small_graph_transactions.parquet`, `hi_small_removed_transactions.parquet` |
+| 2 | `Notebook/02_build_graph_hi_small_duckdb.ipynb` | Kết quả bước 1 | `data/processed/graph/graph_nodes.parquet`, `graph_edges.parquet` |
+| 3 | `Notebook/03_ps1_hi_small.ipynb` | Kết quả bước 1–2, file accounts | `reports/ps1/` |
+| 4 | `Notebook/04_ps2_hi_small.ipynb` | Kết quả bước 1–2, file pattern | `reports/ps2/` |
 
-**PS4: Split-and-merge: scatter-gather motifs**
-- **Question**: Are two accounts linked by several parallel short paths through low-activity “middle” accounts a laundering signature?
-- **Why**: The SCATTER-GATHER and BIPARTITE typologies: split a sum, route it through throw-away accounts, then merge it again.
-- **Graph method**: Count 2-hop paths with a sparse matrix product A·K·A, where K keeps only low-degree intermediaries, then add a time-order check.
-- **Early signa**: Pairs with ≥ 3 low-degree intermediaries: 44 accounts, and all 44 are laundering. With ≥ 2 intermediaries: 239 accounts, 23 % laundering. Very precise, but it covers few cases.
+Mỗi notebook chạy bằng *Restart & Run All*, không cần sửa code.
 
-**PS5: One bank vs. the whole network**
-- **Question**: How much laundering structure does a single bank miss when it sees only its own customers' transactions, compared with a shared (consortium) view?
-- **Why**: Real banks see only their own side of the graph, and this dataset is rare in showing the whole ecosystem. The answer informs policy on inter-bank information sharing.
-- **Graph method**: Re-run the PS1–4 rules on each bank's own view of the graph and compare with the full graph. Then plot recall against the number of banks that share data.
-- **Early signal**: Only 3 of 39 laundering loop structures (7.7 %) are fully visible to any single bank, and a median of 3 banks is involved. One-hop rules (PS1) lose nothing, because every transaction of an account passes through its own bank. Multi-hop rules (PS2–4) lose most of their structure.
----
-## Khung phương pháp
+### 5.2. Cài đặt và đường dẫn
 
-### Ba giai đoạn
+```bash
+pip install -r requirements.txt
+```
 
-1. **Dựng đồ thị và tính đặc trưng.** Sử dụng toàn bộ giao dịch đủ điều kiện trong phạm vi phân tích của từng bài toán. Nhãn `Is Laundering` được giữ riêng cho giai đoạn đánh giá.
+Đặt đường dẫn bằng biến môi trường trước khi mở Jupyter:
 
-2. **Áp dụng quy tắc phát hiện và xếp hạng.** Chốt tham số của quy tắc, cách xử lý đồng hạng và số lượng cảnh báo trước khi đối chiếu với nhãn. Tạo danh sách cảnh báo từ kết quả xếp hạng theo các mức đã xác định.
+| Biến | Ý nghĩa | Notebook dùng |
+|---|---|---|
+| `HI_SMALL_ROOT` | Thư mục dự án, nơi ghi `data/processed/` và `reports/` | 01–04 |
+| `HI_SMALL_TRANS` | Đường dẫn tới `HI-Small_Trans.csv` | 01 |
+| `HI_SMALL_PATTERNS` | Đường dẫn tới `HI-Small_Patterns.txt` | 01, 04 |
+| `HI_SMALL_ACCOUNTS` | Đường dẫn tới `HI-Small_accounts.csv` | 03 |
 
-3. **Đánh giá sau khi tạo cảnh báo (*post-hoc*).** Ghép nhãn với kết quả phát hiện để tính precision, recall và lift. Khi so sánh trực tiếp quy tắc với đối chứng, sử dụng cùng đơn vị đánh giá, cùng tập đánh giá và cùng số lượng cảnh báo.
+Trên Kaggle, notebook 01 tự tìm file trong `/kaggle/input` và ghi vào `/kaggle/working`. Ba file dữ liệu gốc và thư mục `data/` không được đưa lên repo (xem `.gitignore`).
 
-### Chỉ số đánh giá
+## 6. Khung phương pháp
 
-Nghiên cứu đánh giá kết quả tại ba mức cảnh báo tương ứng với **top 0,1%, 0,5% và 1%** của tập ứng viên. Tại mỗi mức, `k` là số đơn vị được chọn và `TP_k` là số đơn vị có nhãn dương trong nhóm được chọn.
+### 6.1. Ba giai đoạn
 
-| Chỉ số | Cách tính và diễn giải |
-| --- | --- |
-| **Precision@k** | `TP_k / k`. Cho biết tỷ lệ cảnh báo đúng trong `k` đơn vị được chọn. Mỗi giá trị được báo cáo kèm **khoảng tin cậy Wilson 95%**. |
-| **Recall@k trong tập ứng viên** | `TP_k / số đơn vị dương trong tập ứng viên`. Đo mức độ bao phủ trong phạm vi áp dụng quy tắc phát hiện. |
-| **Recall@k trên toàn đoạn đánh giá** | `TP_k / tổng số đơn vị dương trong đoạn đánh giá`. Mẫu số bao gồm cả các đơn vị nằm ngoài tập ứng viên. |
-| **Lift@k** | `Precision@k / tỷ lệ dương của baseline`. Baseline được xác định ở cùng cấp đánh giá với quy tắc phát hiện, tức cấp tài khoản hoặc cấp giao dịch. |
-| **Average Precision (AP)** | Được tính trên toàn bộ danh sách ứng viên đã xếp hạng để đánh giá hiệu quả qua nhiều ngưỡng cảnh báo. Khi lớp dương chỉ chiếm khoảng 0,1% số giao dịch, đường precision–recall phản ánh rõ hơn chất lượng cảnh báo và khả năng bao phủ lớp dương so với đường ROC (Saito & Rehmsmeier, 2015). |
+1. **Dựng đồ thị và tính đặc trưng** trên toàn bộ giao dịch đủ điều kiện, khi chưa đọc nhãn.
+2. **Áp dụng quy tắc và xếp hạng.** Tham số, cách phá đồng hạng và ngân sách cảnh báo được chốt trước khi ghép nhãn.
+3. **Chấm điểm sau cùng (*post-hoc*).** Ghép nhãn để tính precision, recall, lift. So sánh quy tắc với baseline luôn ở cùng đơn vị, cùng tập và cùng số cảnh báo.
 
-**Xử lý đồng hạng.** Các đơn vị có cùng điểm được sắp thứ tự ngẫu nhiên với một `seed` cố định để bảo đảm khả năng tái lập. Nếu ngưỡng `k` cắt qua một nhóm đồng hạng, bảng kết quả ghi số đơn vị được chọn từ nhóm đó. Các chỉ số được tính lại với **10 seed** để báo cáo mức dao động do cách xử lý đồng hạng.
+### 6.2. Chia dev / test theo thời gian
 
-## 4. Phân tích khám phá dữ liệu (EDA)
+| Đoạn | Thời gian | Giao dịch | Rửa tiền | Tỷ lệ | Vai trò |
+|---|---|---:|---:|---:|---|
+| **dev** | 01/09 00:00 → 06/09 13:00 | 3.035.199 | 2.272 | 0,075% | Chọn biến thể, hiệu chỉnh tham số |
+| **test** | 06/09 13:00 → 11/09 00:00 (4,46 ngày) | 2.042.038 | 2.250 | 0,110% | Chấm điểm một lần, sau khi đã chốt |
+| **đuôi** | 11/09 → 18/09 16:18 | 1.108 | 655 | 59,1% | Loại khỏi đánh giá chính; chỉ báo cáo độ nhạy |
 
-[Notebook EDA](01_eda_hi_small.ipynb) dùng DuckDB để phân tích tệp gốc `HI-Small_Trans.csv`. Các bảng kết quả và biểu đồ được lưu lần lượt trong `reports/tables/` và `reports/figures/`.
+Cách xác định, chốt trước khi xem nhãn và chỉ dựa vào số lượng giao dịch:
 
-### 4.1. Quy mô dữ liệu
+- **Đuôi** bắt đầu từ ngày đầu tiên mà ngày đó và mọi ngày sau đều có số giao dịch dưới 5% trung vị số giao dịch/ngày. Đây là phần mô phỏng chạy nốt các pattern sau khi dữ liệu nền đã dừng. Đuôi chỉ chiếm 0,022% số giao dịch nhưng chứa 12,7% số giao dịch rửa tiền, nên giữ lại sẽ làm kết quả đẹp giả.
+- **Dev** là **60% số giao dịch** đầu tiên của kỳ chính, làm tròn xuống đầu giờ (thực tế 59,8%). **Test** là phần còn lại.
+- Các mốc được lưu trong `reports/tables/analysis_period.json`, và mọi notebook sau đều đọc từ file này.
+
+Lý do chia theo thời gian thay vì ngẫu nhiên: mô phỏng đúng cách triển khai thật (đặt quy tắc trên quá khứ, áp cho tương lai), và không xé một vòng tiền ra hai tập.
+
+### 6.3. Chỉ số đánh giá
+
+Kết quả được báo cáo tại ba mức ngân sách cảnh báo: **top 0,1%, 0,5% và 1%** của tập ứng viên. `k` là số đơn vị được chọn, `TP_k` là số đơn vị dương trong đó.
+
+| Chỉ số | Cách tính và ý nghĩa |
+|---|---|
+| **Precision@k** | `TP_k / k`: tỷ lệ cảnh báo đúng. Luôn kèm **khoảng tin cậy Wilson 95%** (Wilson, 1927). Quy tắc thắng baseline khi cận dưới Wilson lớn hơn precision của baseline |
+| **Recall@k trong tập ứng viên** | `TP_k / số đơn vị dương trong tập ứng viên` |
+| **Recall@k trên cả đoạn** | `TP_k / tổng số đơn vị dương trong đoạn`, kể cả đơn vị nằm ngoài tập ứng viên |
+| **Lift@k** | `Precision@k / tỷ lệ dương của baseline`, ở cùng cấp đánh giá (tài khoản hoặc giao dịch) |
+| **Average Precision (AP)** | Tính trên toàn bộ danh sách đã xếp hạng. Khi lớp dương chỉ chiếm khoảng 0,1%, đường precision–recall phản ánh chất lượng cảnh báo rõ hơn đường ROC (Saito & Rehmsmeier, 2015) |
+
+**Đơn vị đánh giá.** RQ1 chấm theo **tài khoản**: một tài khoản dương tính nếu gửi hoặc nhận ít nhất 1 giao dịch rửa tiền (bất kỳ định dạng nào, kể cả self-loop) trong đoạn. RQ2 chấm theo **giao dịch**: mẫu số là mọi giao dịch của đoạn trong file gốc.
+
+**Xử lý đồng hạng.** Các đơn vị cùng điểm được xếp ngẫu nhiên với `seed` cố định. Nếu ngưỡng `k` cắt qua một nhóm đồng hạng, bảng kết quả ghi số đơn vị được chọn từ nhóm đó, và các chỉ số được tính lại với 10 seed để báo cáo mức dao động.
+
+## 7. Phân tích khám phá (EDA)
+
+Notebook 01 dùng DuckDB để đọc `HI-Small_Trans.csv`. Bảng lưu trong `reports/tables/`, hình lưu trong `reports/figures/`.
+
+### 7.1. Quy mô
 
 | Chỉ số | Giá trị |
-| --- | ---: |
+|---|---:|
 | Giao dịch | 5.078.345 |
-| Tài khoản phân biệt theo khóa ghép | 515.088 |
-| Mã ngân hàng phân biệt theo chuỗi gốc | 30.528 |
-| Thời gian quan sát | 01/09/2022 00:00 đến 18/09/2022 16:18 |
-| Độ dài kỳ quan sát | 17,7 ngày |
+| Tài khoản (khóa: mã ngân hàng dạng số + số tài khoản) | 515.088 |
+| Mã ngân hàng dạng chuỗi gốc | 30.528 |
+| Ngân hàng sau khi gộp số 0 đầu (`010` = `10`) | 30.470 |
+| Thời gian quan sát | 01/09/2022 00:00 → 18/09/2022 16:18 (17,7 ngày) |
 
-### 4.2. Mất cân bằng lớp
+Mọi dòng trong file đều có mã ngân hàng viết kèm số 0 đầu. Khóa tài khoản dùng mã dạng số và khớp với cột `Bank ID` của `HI-Small_accounts.csv`. Không tài khoản nào bị tách đôi do cách viết mã ngân hàng (`reports/tables/eda_bank_codes.csv`).
+
+### 7.2. Mất cân bằng lớp
 
 | Nhãn | Số giao dịch | Tỷ lệ |
-| --- | ---: | ---: |
+|---|---:|---:|
 | Hợp lệ (0) | 5.073.168 | 99,898% |
 | Rửa tiền (1) | 5.177 | 0,102% |
 
 ![Phân bố nhãn giao dịch](reports/figures/eda_class_balance.png)
 
-Bình quân khoảng 981 giao dịch có một giao dịch mang nhãn rửa tiền. Dự đoán mọi giao dịch là hợp lệ vẫn đạt accuracy khoảng 99,9%. Vì vậy, các kết quả phát hiện được đánh giá theo các chỉ số ở mục 3.4, trong đó precision và recall cho biết chất lượng và mức độ bao phủ của cảnh báo.
+Trung bình cứ khoảng 981 giao dịch thì có 1 giao dịch rửa tiền. Đoán mọi giao dịch là hợp lệ vẫn đạt accuracy 99,9%, nên khóa luận đánh giá bằng các chỉ số ở mục 6.3.
 
-### 4.3. Tỷ lệ rửa tiền theo phương thức thanh toán và tiền tệ
+### 7.3. Tỷ lệ rửa tiền theo định dạng thanh toán và tiền tệ
 
-| Phương thức | Tổng số giao dịch | Số giao dịch rửa tiền | Tỷ lệ |
-| --- | ---: | ---: | ---: |
+| Định dạng | Giao dịch | Rửa tiền | Tỷ lệ |
+|---|---:|---:|---:|
 | ACH | 600.797 | 4.483 | 0,746% |
 | Bitcoin | 146.091 | 56 | 0,038% |
 | Cash | 490.891 | 108 | 0,022% |
@@ -148,144 +198,238 @@ Bình quân khoảng 981 giao dịch có một giao dịch mang nhãn rửa ti�
 | Reinvestment | 481.056 | 0 | 0,000% |
 | Wire | 171.855 | 0 | 0,000% |
 
-![Tỷ lệ rửa tiền theo phương thức và tiền tệ](reports/figures/eda_rate_by_format_currency.png)
+![Tỷ lệ rửa tiền theo định dạng và tiền tệ](reports/figures/eda_rate_by_format_currency.png)
 
-ACH chiếm **11,8% tổng số giao dịch** và chứa **86,6% số giao dịch mang nhãn rửa tiền**. Tỷ lệ dương trong nhóm ACH cao gấp khoảng 7,3 lần mức nền trên CSV gốc. Vì vậy, ACH-only được sử dụng làm đối chứng ở cấp giao dịch. Xét theo đồng tiền thanh toán, Saudi Riyal có tỷ lệ dương cao nhất, ở mức **0,420%**.
+ACH chiếm **11,8%** tổng số giao dịch nhưng chứa **86,6%** giao dịch rửa tiền; tỷ lệ dương của ACH cao gấp khoảng 7,3 lần mức nền. Vì vậy ACH-only là baseline cấp giao dịch, và đồ thị con ACH là phạm vi chính của RQ1–RQ2. Theo tiền tệ thanh toán, Saudi Riyal có tỷ lệ cao nhất (0,420%).
 
-### 4.4. Giao dịch có đồng tiền gửi và nhận khác nhau
+### 7.4. Giao dịch khác tiền tệ
 
-Có 72.170 giao dịch có đồng tiền thanh toán khác đồng tiền nhận, tương ứng với 1,423% số giao dịch hợp lệ. Toàn bộ 5.177 giao dịch mang nhãn rửa tiền trong CSV gốc có cùng đồng tiền thanh toán và đồng tiền nhận.
+72.170 giao dịch hợp lệ (1,42%) có tiền tệ trả khác tiền tệ nhận; **không giao dịch rửa tiền nào** như vậy. Nhưng các vòng rửa tiền thường đổi tiền tệ **giữa các chặng**: mỗi chặng dùng một loại tiền khác nhau. Vì vậy khi so số tiền dọc một vòng phải quy đổi sang USD.
 
-![Giao dịch có đồng tiền gửi và nhận khác nhau theo nhãn](reports/figures/eda_cross_currency.png)
+### 7.5. Số tiền quy đổi USD
 
-### 4.5. Phân phối số tiền thanh toán quy đổi sang USD
+Tỷ giá được ước lượng ngay từ dữ liệu: với mỗi cặp tiền tệ, lấy trung vị của `amt_received / amt_paid` trên các giao dịch khác tiền tệ có số tiền trả từ 100 trở lên, rồi nối các cặp về USD. Kết quả lưu trong [`fx_rates.csv`](reports/tables/fx_rates.csv).
 
-Tỷ giá được ước tính từ dữ liệu tổng hợp. Với mỗi cặp tiền tệ, notebook lấy trung vị của `amt_received / amt_paid` trên các giao dịch khác đồng tiền có số tiền thanh toán từ 100 đơn vị trở lên. Sau đó, notebook quy đổi thông qua các cặp nối với USD, ưu tiên các cặp có nhiều quan sát hơn trong quá trình duyệt. [Bảng tỷ giá](reports/tables/fx_rates.csv)
-
-| Nhóm giao dịch | Q1 (USD) | Trung vị (USD) | Q3 (USD) |
-| --- | ---: | ---: | ---: |
-| Hợp lệ (mẫu ngẫu nhiên khoảng 5%) | 158 | 889 | 5.232 |
+| Nhóm | Q1 (USD) | Trung vị (USD) | Q3 (USD) |
+|---|---:|---:|---:|
+| Hợp lệ (mẫu ngẫu nhiên 5%, seed cố định) | 159 | 897 | 5.305 |
 | Rửa tiền | 2.161 | 5.879 | 13.759 |
 
-![Phân phối số tiền thanh toán quy đổi sang USD](reports/figures/eda_amount_distribution.png)
+![Phân phối số tiền USD](reports/figures/eda_amount_distribution.png)
 
-Trong mẫu phân tích, trung vị số tiền thanh toán của nhóm rửa tiền cao gấp khoảng 6,6 lần nhóm hợp lệ. Phân phối lệch phải, với giá trị lớn nhất trong mẫu khoảng 16,3 tỷ USD. Bảng sử dụng trung vị và tứ phân vị để mô tả số tiền giao dịch.
+Trung vị của nhóm rửa tiền cao gấp khoảng 6,6 lần nhóm hợp lệ. Phân phối lệch phải mạnh (giao dịch rửa tiền lớn nhất khoảng 16,3 tỷ USD), nên bảng dùng trung vị và tứ phân vị.
 
-### 4.7. Phân bố giao dịch theo thời gian
+### 7.6. Hoạt động theo thời gian
 
-| Kỳ | Số giao dịch | Số giao dịch rửa tiền | Tỷ lệ |
-| --- | ---: | ---: | ---: |
-| `dev` · 01–06/09 | 3.248.921 | 2.530 | 0,078% |
-| `test` · 07–10/09 | 1.828.316 | 1.992 | 0,109% |
-| `tail` · 11–18/09 | 1.108 | 655 | 59,116% |
+![Số giao dịch và tỷ lệ rửa tiền theo thời gian](reports/figures/eda_activity_over_time.png)
 
-![Số lượng và tỷ lệ giao dịch rửa tiền theo thời gian](reports/figures/eda_activity_over_time.png)
+Từ 11/09 số giao dịch mỗi ngày giảm xuống còn vài trăm hoặc vài chục, trong khi tỷ lệ rửa tiền vọt lên 57–73%. Đó là đoạn đuôi được loại khỏi đánh giá (mục 6.2).
 
-Giai đoạn 11–18/09 chiếm **0,022% tổng số giao dịch** và chứa **12,7% số giao dịch rửa tiền** trong CSV gốc. EDA xác định đoạn đuôi từ ngày đầu tiên mà ngày đó và tất cả các ngày sau đều có số giao dịch dưới 5% trung vị số giao dịch theo ngày. Kỳ chính được chia theo thời lượng, với 60% đầu cho `dev` và 40% cuối cho `test`. Các mốc được lưu trong `reports/tables/analysis_period.json`. Đoạn `tail` được báo cáo riêng trong phân tích độ nhạy.
+### 7.7. Tiền xử lý trước khi dựng đồ thị
 
-### 4.8. Tiền xử lý dữ liệu để dựng đồ thị
-
-| Bước | Số giao dịch loại bỏ | Số giao dịch còn lại |
-| --- | ---: | ---: |
+| Bước | Loại bỏ | Còn lại |
+|---|---:|---:|
 | Đọc CSV gốc | — | 5.078.345 |
-| Loại giao dịch có cùng tài khoản gửi và nhận (*self-loop*) | 591.212 | 4.487.133 |
-| Giữ một bản đại diện cho mỗi nhóm giao dịch trùng | 9 | 4.487.124 |
+| Bỏ giao dịch có tài khoản gửi trùng tài khoản nhận (*self-loop*) | 591.212 | 4.487.133 |
+| Bỏ dòng trùng hoàn toàn (giữ 1 bản mỗi nhóm) | 9 | **4.487.124** |
 
-Các nhóm trùng được xác định bằng 10 trường dữ liệu nguồn. Notebook giữ nguyên chuỗi số tiền để nhận diện dòng trùng và kiểm tra sự nhất quán của nhãn trong từng nhóm.
+- Dòng trùng được xác định bằng 10 trường gốc, giữ nguyên chuỗi số tiền; không nhóm trùng nào có nhãn mâu thuẫn.
+- Phần lớn self-loop là Reinvestment (481.056). **11 self-loop mang nhãn rửa tiền** (thuộc GATHER-SCATTER).
+- Các dòng bị loại được lưu riêng, và vẫn nằm trong **mẫu số** khi tính recall, để không làm đẹp kết quả.
 
-EDA lưu các giao dịch dùng để dựng đồ thị vào `hi_small_graph_transactions.parquet` và các giao dịch đã loại vào `hi_small_removed_transactions.parquet`. PS1 ghép lại hai tệp khi đánh giá trên phạm vi CSV gốc. **11 self-loop mang nhãn rửa tiền** vì vậy vẫn nằm trong mẫu số recall ở các đoạn tương ứng.
+### 7.8. Baseline cấp giao dịch
 
-### 4.9. Baseline cấp giao dịch
+| Tập | Baseline | Cảnh báo | Cảnh báo đúng | Precision | Recall | Lift so với ngẫu nhiên |
+|---|---|---:|---:|---:|---:|---:|
+| Cả file | Ngẫu nhiên (kỳ vọng) | — | — | 0,102% | — | 1,0× |
+| Cả file | ACH-only | 600.797 | 4.483 | 0,746% | 86,6% | 7,3× |
+| dev | ACH-only | 337.203 | 1.882 | 0,558% | 82,8% | 7,5× |
+| **test** | Ngẫu nhiên (kỳ vọng) | — | — | 0,110% | — | 1,0× |
+| **test** | **ACH-only** | **262.486** | **1.946** | **0,741%** | **86,5%** | **6,7×** |
 
-Random dùng tỷ lệ dương của tập đánh giá làm precision kỳ vọng. ACH-only gắn cờ mọi giao dịch có phương thức ACH trong tập đó.
+Nguồn: [`eda_transaction_baselines.csv`](reports/tables/eda_transaction_baselines.csv). Để so ở cùng ngân sách, PS1 và PS2 còn lấy thêm một **mẫu ACH ngẫu nhiên có đúng bằng số cảnh báo** của quy tắc.
 
-| Tập đánh giá | Đối chứng | Số cảnh báo | Số cảnh báo đúng | Precision | Recall | Lift so với Random |
-| --- | --- | ---: | ---: | ---: | ---: | ---: |
-| CSV gốc | Random (kỳ vọng) | — | — | 0,1019% | — | 1,00× |
-| CSV gốc | ACH-only | 600.797 | 4.483 | 0,7462% | 86,5946% | 7,32× |
-| Sau tiền xử lý | Random (kỳ vọng) | — | — | 0,1151% | — | 1,00× |
-| Sau tiền xử lý | ACH-only | 529.446 | 4.472 | 0,8447% | 86,5660% | 7,34× |
+## 8. Đồ thị giao dịch
 
-EDA lưu baseline của tập sau tiền xử lý trong [`eda_transaction_baselines.csv`](reports/tables/eda_transaction_baselines.csv). [Notebook PS1](03_ps1_hi_small.ipynb) tính lại baseline cấp giao dịch trên từng đoạn của CSV gốc. Để so sánh ở cùng ngân sách cảnh báo, PS1 lấy thêm mẫu ACH ngẫu nhiên có cùng số giao dịch được chọn với quy tắc phát hiện.
+Notebook 02 đọc tập giao dịch đã tiền xử lý, dựng danh sách đỉnh và cạnh bằng DuckDB, và tính thành phần liên thông bằng SciPy.
 
-## 5. Dựng đồ thị giao dịch
+### 8.1. Định nghĩa
 
-[Notebook dựng đồ thị](02_build_graph_hi_small_duckdb.ipynb) đọc tệp giao dịch sau tiền xử lý, tạo danh sách đỉnh và cạnh bằng DuckDB, rồi tính thành phần liên thông trên ma trận thưa bằng SciPy.
+Mạng giao dịch là một **đa đồ thị có hướng, có thời gian và có trọng số**:
 
-### 5.1. Định nghĩa đồ thị
+$$G = (V, E, s, d, t, w)$$
 
-Mạng giao dịch được biểu diễn dưới dạng **đa đồ thị có hướng, có thời gian và có trọng số**.
+- $V$: tập tài khoản; mỗi đỉnh là một tài khoản tại một ngân hàng.
+- $E$: tập cạnh; mỗi giao dịch sau tiền xử lý là một cạnh riêng, kể cả khi cùng cặp tài khoản và cùng phút.
+- $s(e)$, $d(e)$: tài khoản gửi và nhận của cạnh $e$.
+- $t(e)$: thời điểm giao dịch, chính xác tới phút.
+- $w(e)$: số tiền trả quy đổi USD. Số tiền là **thuộc tính** của cạnh, không dùng làm khoảng cách.
 
-$$
-G = (V, E, s, d, t, w)
-$$
+Từ $G$, khóa luận dùng hai cách nhìn:
 
-- $V$ là tập tài khoản. Mỗi đỉnh đại diện cho một tài khoản tại một ngân hàng.
-- $E$ là tập cạnh. Mỗi giao dịch sau tiền xử lý tương ứng với một cạnh riêng.
-- $s(e)$ và $d(e)$ lần lượt là tài khoản gửi và nhận của cạnh $e$.
-- $t(e)$ là timestamp của giao dịch, với độ phân giải đến phút.
-- $w(e)$ là số tiền thanh toán của từng cạnh quy đổi sang USD.
+| Ký hiệu | Tên trong code | Là gì | Trả lời câu hỏi | Dùng để |
+|---|---|---|---|---|
+| **T** (*event graph*) | `graph_edges` | Đa đồ thị: mỗi giao dịch là một cạnh, có thời điểm và số tiền | Ai trả ai, **lúc nào**, bao nhiêu | Kiểm tra thứ tự thời gian của loop, đếm cửa sổ của hub |
+| **R** (*relationship graph*) | `directed_pairs` | Đồ thị đơn: mỗi cặp gửi → nhận chỉ một cạnh | Ai **từng** trả cho ai | Tính degree, SCC, liệt kê vòng tĩnh |
 
-Các giao dịch giữa cùng một cặp tài khoản vẫn là những cạnh riêng, kể cả khi diễn ra trong cùng một phút. Danh sách `directed_pairs` lưu mỗi cặp gửi–nhận phân biệt một lần để tính bậc và thành phần liên thông.
+Ý tưởng thiết kế: **tìm hình dạng trong R, kiểm tra thời gian trong T.**
 
-### 5.2. Định danh đỉnh
+### 8.2. Định danh đỉnh
 
-Khóa đỉnh có dạng `account_key = bank_code + "_" + account_id`. Mã ngân hàng và mã tài khoản được lưu dưới dạng chuỗi để bảo toàn các số 0 ở đầu. `node_id` được gán theo thứ tự sắp xếp của `account_key` trên toàn mạng. Các đồ thị lọc theo ACH hoặc theo ngân hàng sử dụng cùng bộ định danh.
+`account_key = bank_id + "_" + account_id`, với `bank_id` là mã ngân hàng dạng số (đã bỏ số 0 đầu) và `account_id` giữ dạng chuỗi. `node_id` được gán theo thứ tự chữ cái của `account_key`, không theo thứ tự dòng (vì thứ tự dòng trong file có tương quan với nhãn). Mọi đồ thị con (ACH, theo ngân hàng) dùng chung bộ `node_id`.
 
-### 5.3. Thuộc tính cạnh
+### 8.3. Thuộc tính cạnh (`graph_edges.parquet`)
 
-| Cột trong `graph_edges.parquet` | Ý nghĩa |
-| --- | --- |
-| `transaction_id` | Định danh giao dịch, đánh số từ 1 theo vị trí dòng dữ liệu trong CSV gốc |
+| Cột | Ý nghĩa |
+|---|---|
+| `transaction_id` | Số thứ tự dòng trong CSV gốc, đánh từ 1 |
 | `source_id`, `target_id` | `node_id` của tài khoản gửi và nhận |
-| `src`, `dst` | Khóa ghép của tài khoản gửi và nhận |
-| `timestamp`, `timestamp_s` | Thời điểm giao dịch ở dạng datetime và số giây epoch |
-| `from_bank`, `to_bank` | Mã ngân hàng dạng chuỗi gốc ở hai đầu |
-| `amt_paid`, `pay_ccy` | Số tiền và đồng tiền thanh toán |
-| `amount_received`, `recv_ccy` | Số tiền và đồng tiền nhận |
-| `payment_format` | Phương thức thanh toán |
-| `amt_usd`, `weight` | Số tiền thanh toán của từng cạnh quy đổi sang USD trong chế độ `usd` |
+| `src`, `dst` | `account_key` của tài khoản gửi và nhận |
+| `timestamp`, `timestamp_s` | Thời điểm, dạng datetime và giây epoch |
+| `from_bank`, `to_bank`, `from_bank_id`, `to_bank_id` | Mã ngân hàng, dạng chuỗi gốc và dạng số |
+| `amt_paid`, `pay_ccy`, `amount_received`, `recv_ccy` | Số tiền và tiền tệ ở hai đầu |
+| `payment_format` | Định dạng thanh toán |
+| `usd_paid`, `usd_recv`, `weight` | Số tiền quy USD phía trả và phía nhận; `weight = usd_paid` |
 
-Nhãn `is_laundering` được lấy từ các tệp giao dịch của EDA và ghép theo `transaction_id` ở bước đánh giá.
+Nhãn không nằm trong file cạnh; nó được ghép theo `transaction_id` ở bước chấm điểm.
 
-### 5.4. Cách sử dụng đồ thị trong từng bài toán
+### 8.4. Cách mỗi RQ dùng đồ thị
 
-| Bài toán | Thông tin sử dụng |
-| --- | --- |
-| **PS1 · Fan-in / fan-out** | Đếm đối tác ACH phân biệt theo hướng trong cửa sổ 24 hoặc 48 giờ. Mỗi đối tác đóng góp một đơn vị nếu xuất hiện ít nhất một lần trong cửa sổ. B3 đếm đối tác phân biệt trên toàn bộ đoạn đánh giá. |
-| **PS2 · Chu trình giao dịch** | Dùng các cặp gửi–nhận phân biệt để tính SCC. Khi tìm chu trình, kiểm tra hướng và timestamp của từng giao dịch. Số tiền từng bước được dùng để mô tả chu trình. |
-| **PS5 · Phạm vi quan sát của ngân hàng** | Giữ các cạnh có ngân hàng gửi hoặc ngân hàng nhận thuộc nhóm đang xét. Mỗi `transaction_id` xuất hiện một lần trong phạm vi của nhóm. |
+| RQ | Dùng gì |
+|---|---|
+| **RQ1 · Hubs** | Trên T (chỉ ACH): đếm số đối tác phân biệt theo từng hướng trong cửa sổ trượt 24h, 48h (96h để kiểm tra độ nhạy). Một đối tác chỉ tính một lần trong cửa sổ. Baseline B3 là degree trên R trong cả đoạn |
+| **RQ2 · Loops** | Trên R (ACH, từng đoạn): tính SCC, liệt kê chu trình đơn. Trên T: kiểm tra tồn tại một dãy giao dịch thật có thời điểm tăng dần dọc vòng và khép lại trong δ giờ |
+| **RQ3 · Một ngân hàng** | Một ngân hàng thấy giao dịch nếu giữ tài khoản gửi **hoặc** nhận (`bank_edge_view` trong nb 02). Một loop được thấy trọn khi một ngân hàng chạm vào mọi chặng |
 
-### 5.5. Kích thước và phân phối bậc
+### 8.5. Kích thước và degree
 
-| Chỉ số | Toàn bộ phương thức | Chỉ ACH |
-| --- | ---: | ---: |
-| Đỉnh (tài khoản) | 422.734 | 238.922 |
-| Cạnh (giao dịch) | 4.487.124 | 529.446 |
-| Cặp gửi–nhận phân biệt | 647.939 | 208.522 |
-| Cạnh vượt quá cạnh đầu tiên của mỗi cặp | 3.839.185 (85,6%) | 320.924 (60,6%) |
+| Chỉ số | Mọi định dạng | Chỉ ACH |
+|---|---:|---:|
+| Tài khoản (đỉnh) | 422.734 | 238.922 |
+| Giao dịch (cạnh của T) | 4.487.124 | 529.446 |
+| Cặp gửi → nhận phân biệt (cạnh của R) | 647.939 | |
+| Giao dịch lặp lại một cặp đã có | 3.839.185 (85,6%) | |
+| Ngân hàng | 23.378 | |
 
-Đồ thị toàn mạng có 23.432 mã ngân hàng. Bậc của mỗi đỉnh được tính theo số đối tác phân biệt.
+Ô trống: nb 02 chưa in số này cho ACH; bổ sung khi chạy lại.
 
-| Bậc trên toàn mạng | Trung vị | P90 | P99 | Lớn nhất |
-| --- | ---: | ---: | ---: | ---: |
-| Bậc vào (*in-degree*) | 1 | 3 | 7 | 545 |
-| Bậc ra (*out-degree*) | 1 | 3 | 10 | 14.230 |
+Tài khoản giảm từ 515.088 (file gốc) xuống 422.734 vì có tài khoản chỉ xuất hiện trong self-loop. Tương tự, số ngân hàng giảm từ 30.470 xuống **23.378**.
 
-### 5.6. Thành phần liên thông
+Degree tính theo số đối tác phân biệt trên R:
 
-| Phạm vi | Loại thành phần | Số thành phần | Số đỉnh của thành phần lớn nhất | Số thành phần có hơn một đỉnh |
-| --- | --- | ---: | ---: | ---: |
-| Toàn bộ phương thức | Mạnh (SCC) | 402.415 | 17.075 | 2.928 |
-| Toàn bộ phương thức | Yếu | 21.785 | 372.089 | 21.785 |
-| Chỉ ACH | Mạnh (SCC) | 235.452 | 25 | 3.043 |
-| Chỉ ACH | Yếu | 50.331 | 23.653 | 50.331 |
+| Degree (mọi định dạng) | Trung vị | P90 | P99 | Lớn nhất |
+|---|---:|---:|---:|---:|
+| Vào (*in-degree*) | 1 | 3 | 7 | 545 |
+| Ra (*out-degree*) | 1 | 3 | 10 | 14.230 |
 
-Thống kê ACH được tính trên 238.922 tài khoản xuất hiện trong tập ACH. Mỗi chu trình có hướng nằm trong một SCC. PS2 tìm chu trình đơn dài 3–6 cạnh nên có thể giới hạn tìm kiếm vào các SCC có ít nhất ba tài khoản, rồi kiểm tra thứ tự thời gian trên từng giao dịch.
+Phần lớn tài khoản chỉ có 1 đối tác, một số ít có hàng trăm đến hàng chục nghìn (đuôi dày). Đây là lý do đầu bảng xếp hạng degree chủ yếu là doanh nghiệp lớn hợp pháp.
 
+### 8.6. Thành phần liên thông
 
+Mọi chu trình có hướng đều nằm trọn trong một **thành phần liên thông mạnh** (SCC), nên chỉ cần tìm vòng bên trong các SCC có ít nhất 2 tài khoản.
 
+| Phạm vi | Số tài khoản xét | SCC có ≥ 2 tài khoản | Tài khoản trong các SCC đó | SCC lớn nhất |
+|---|---:|---:|---:|---:|
+| Mọi định dạng, cả kỳ | 422.734 | 2.928 | 23.247 | **17.075** |
+| ACH, cả kỳ | 238.922 | 3.043 | 6.513 | **25** |
+| ACH, đoạn dev | | | 2.227 | 10 |
+| ACH, đoạn test | | | 1.585 | 12 |
+| Mọi định dạng, đoạn dev | | | 7.676 | 4.578 |
 
-  
+Ý nghĩa: trên mọi định dạng có một SCC khổng lồ, nên vòng ở đó phần lớn là nhiễu nền. Trong ACH, SCC lớn nhất chỉ 25 tài khoản (10–12 trong từng đoạn), nên vòng hiếm và nổi bật.
 
-  
+> Ghi chú về số đếm: nếu tính SCC của ACH trên cả 422.734 tài khoản (như ô [12] của nb 02), 183.812 tài khoản không có giao dịch ACH sẽ bị đếm thành SCC 1 đỉnh, cho tổng 419.264 thành phần. Tính trên 238.922 tài khoản có ACH thì tổng là 235.452. Hai con số cùng mô tả một thứ; bảng trên chỉ báo phần có ý nghĩa (SCC ≥ 2 tài khoản).
+
+## 9. Kết quả hiện có (đoạn test, trước khi đóng băng)
+
+### 9.1. RQ1 · Hubs (nb 03)
+
+**Chọn trên dev:** 8 biến thể (2 hướng × cửa sổ 24/48h × điểm thô hoặc theo nhóm đối chiếu). Biến thể có AP cao nhất trên dev là `fan_in_48h_raw`, được đóng băng với hash `369a3997bb05980a` (`reports/ps1/ps1_frozen_choice.json`).
+
+**Precision cấp tài khoản trên test** (156.284 tài khoản ứng viên; tỷ lệ dương 1,77%):
+
+| Điểm xếp hạng | top 0,1% (k = 156) | top 0,5% (k = 781) | top 1% (k = 1.563) |
+|---|---:|---:|---:|
+| Fan-in trong 48h (biến thể chính) | 6,4% | 8,6% | 8,4% |
+| B3 fan-in (degree vào cả đoạn) | 6,4% | 8,6% | 8,6% |
+| Fan-out trong 48h | **33,3%** | 10,9% | 7,7% |
+| B3 fan-out (degree ra cả đoạn) | **34,0%** | 11,5% | 8,3% |
+| Chọn ngẫu nhiên (B1) | 1,77% | 1,77% | 1,77% |
+
+Đọc kết quả:
+
+- Mọi biến thể đều **vượt chọn ngẫu nhiên** (cận dưới Wilson lớn hơn 1,77% ở cả 3 mức).
+- Cửa sổ thời gian **không thêm gì so với degree thông thường**, ở cả hai hướng. Trên dev cũng vậy: ở top 0,1%, fan-out 48h đạt 15,2% còn B3 fan-out đạt 17,6%.
+- Lý do: đoạn test chỉ dài 4,46 ngày, nên cửa sổ 48h đã phủ gần nửa đoạn. Với các tài khoản đầu bảng, số đối tác trong 48h bằng đúng số đối tác của cả đoạn (ví dụ `fan_in_48h = b3_in = 88`). Đây là đặc điểm của dữ liệu, không phải lỗi phương pháp.
+- Tín hiệu mạnh nằm ở **đầu danh sách bậc ra** (khoảng 1/3 tài khoản đầu bảng dính rửa tiền). Biến thể chính được chọn theo AP (toàn bảng xếp hạng) nên là fan-in; kết quả này được báo cáo nguyên trạng, **không chọn lại theo test**.
+- Hồ sơ 20 cảnh báo fan-in đầu bảng: 10 công ty hợp danh, 9 công ty, 1 hộ kinh doanh, mỗi tài khoản nhận từ 73–88 người gửi; chỉ 1/20 dính rửa tiền (`reports/ps1/ps1_alerts_test.csv`). Hub lớn nhất chủ yếu là doanh nghiệp hợp pháp.
+
+Phụ lục (không phải kết quả chính): đánh giá cấp giao dịch của PS1, biến thể theo nhóm đối chiếu (Bolton & Hand, 2001), và chỉ số burstiness Aₙ (Kim & Jo, 2016; chỉ tính được cho 2,6–6,5% tài khoản ứng viên).
+
+### 9.2. RQ2 · Loops (nb 04)
+
+**Quy tắc chính:** giao dịch nằm trên một vòng **ACH dài 3–6** mà các chặng xảy ra theo thứ tự thời gian tăng dần và cả vòng khép lại trong **δ = 89 giờ**. δ là phân vị 95% thời lượng của 16 attempt CYCLE khép trong dev (lấy từ `Patterns.txt`, chỉ dùng dev).
+
+**Đánh giá cấp giao dịch trên test:**
+
+| Quy tắc | Cảnh báo | Đúng | Precision [Wilson 95%] | Recall |
+|---|---:|---:|---:|---:|
+| **Loop ACH 3–6, đúng thứ tự, ≤ δ (chính)** | **122** | **67** | **54,9% [46,1–63,5]** | 3,0% |
+| Như trên, không giới hạn δ | 143 | 79 | 55,2% | 3,5% |
+| Như trên, trên đồ thị mọi định dạng | 132 | 69 | 52,3% | 3,1% |
+| Vòng tĩnh 3–6 (không xét thời gian) | 210 | 92 | 43,8% | 4,1% |
+| Hai đầu giao dịch cùng một SCC | 1.826 | 189 | 10,4% | 8,4% |
+| Mẫu ACH ngẫu nhiên cùng 122 cảnh báo | 122 | 1 | 0,8% | 0,04% |
+| ACH-only | 262.486 | 1.946 | 0,74% | 86,5% |
+
+- Quy tắc chính có precision khoảng **74 lần ACH-only** và khoảng 500 lần chọn ngẫu nhiên, nhưng bắt được ít (recall 3%): chính xác nhưng hẹp. Để có cùng 67 giao dịch đúng, ACH-only cần khoảng 9.000 cảnh báo.
+- Thứ tự thời gian nâng precision từ 43,8% (vòng tĩnh) lên 54,9%.
+- Trên dev: 157 cảnh báo, 43,3%. Bỏ giới hạn δ thì dev giảm còn 36,6%, nhưng test gần như không đổi (55,2%), nên kết luận không phụ thuộc vào δ.
+- Điều kiện thời gian "<" và "≤" cho cùng kết quả (122/67): giao dịch cùng phút không ảnh hưởng.
+- Độ dài khác: vòng dài 2 cho 7,3% (1.694 cảnh báo); vòng dài 7–12 cho 7/7 đúng.
+- **Theo kiểu rửa tiền:** 67 giao dịch đúng gồm 18 CYCLE, 17 GATHER-SCATTER, 6 FAN-OUT, 6 RANDOM, 5 FAN-IN, 5 STACK, 5 SCATTER-GATHER, 3 BIPARTITE, 2 không thuộc attempt nào. Quy tắc bắt cả những kiểu khác có tạo vòng, không chỉ CYCLE.
+- **Theo attempt:** test có 25 attempt CYCLE, trong đó 5 nằm trong phạm vi quy tắc (dài 3–6, toàn ACH, đúng thứ tự, nằm trọn trong test); quy tắc tìm lại trọn 3/5.
+- **Độ đúng của thuật toán:** cách liệt kê vòng và kiểm tra thời gian đã được so với vét cạn trên 150 đồ thị ngẫu nhiên nhỏ (có cạnh song song, cùng phút, mọi cách xoay vòng).
+
+### 9.3. RQ3 · Một ngân hàng
+
+Chưa làm. Sẽ tính từ các loop đã tìm được ở RQ2 (`reports/ps2/ps2_cycles_ACH_test.csv`): tỷ lệ loop mà một ngân hàng thấy trọn, và số ngân hàng trên mỗi loop.
+
+## 10. Hạn chế đã biết
+
+1. δ được hiệu chỉnh từ `Patterns.txt` (thông tin nhãn) trên dev. Ảnh hưởng nhỏ: test gần như không đổi khi bỏ δ.
+2. Mỗi loop phải nằm trọn trong một đoạn, nên loop vắt qua mốc 06/09 13:00 không được tính.
+3. Các giao dịch đúng không độc lập với nhau (nhiều loop chồng lên nhau trong cùng một nhóm tài khoản), nên khoảng Wilson có thể hẹp hơn thực tế. Cần báo cáo số ring cạnh precision.
+4. Nhãn tài khoản là "chạm ít nhất 1 giao dịch rửa tiền", nên tài khoản vô can nhận tiền một lần cũng là dương tính.
+5. Biến thể chính của PS1 chọn theo AP, trong khi câu hỏi quan tâm đầu danh sách.
+6. Dữ liệu tổng hợp: các tỷ lệ (ví dụ 86,6% rửa tiền đi qua ACH) phản ánh bộ mô phỏng, không suy rộng ra thực tế.
+
+## 11. Cấu trúc thư mục
+
+```
+Notebook/
+  01_eda_hi_small.ipynb              EDA, chia dev/test, tiền xử lý, baseline
+  02_build_graph_hi_small_duckdb.ipynb  Dựng T và R, degree, SCC
+  03_ps1_hi_small.ipynb              RQ1 · Hubs
+  04_ps2_hi_small.ipynb              RQ2 · Loops (và RQ3)
+reports/
+  figures/   Hình EDA
+  tables/    Bảng EDA, analysis_period.json, fx_rates.csv
+  ps1/       Kết quả RQ1 (metrics, cảnh báo, lựa chọn đã đóng băng)
+  ps2/       Kết quả RQ2 (danh sách loop, metrics, nhật ký chạy)
+requirements.txt
+.gitignore
+```
+
+## 13. Tài liệu tham khảo
+
+- Altman, E., Blanuša, J., von Niederhäusern, L., Egressy, B., Anghel, A., & Atasu, K. (2023). Realistic synthetic financial transactions for anti-money laundering models. *NeurIPS 2023, Datasets and Benchmarks Track*. arXiv:2306.16424.
+- Bolton, R. J., & Hand, D. J. (2001). Unsupervised profiling methods for fraud detection. *Conference on Credit Scoring and Credit Control VII*, Edinburgh.
+- Goh, K.-I., & Barabási, A.-L. (2008). Burstiness and memory in complex systems. *EPL*, 81(4), 48002.
+- Johnson, D. B. (1975). Finding all the elementary circuits of a directed graph. *SIAM Journal on Computing*, 4(1), 77–84.
+- Kim, E.-K., & Jo, H.-H. (2016). Measuring burstiness for finite event sequences. *Physical Review E*, 94(3), 032311.
+- Kumar, R., & Calders, T. (2018). 2SCENT: An efficient algorithm to enumerate all simple temporal cycles. *Proceedings of the VLDB Endowment*, 11(11), 1441–1453.
+- Saito, T., & Rehmsmeier, M. (2015). The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets. *PLOS ONE*, 10(3), e0118432.
+- Starnini, M., Tsourakakis, C. E., Zamanipour, M., Panisson, A., Allasia, W., Fornasiero, M., Li Puma, L., et al. (2021). Smurf-based anti-money laundering in time-evolving transaction networks. *ECML PKDD 2021*, LNAI 12978, 171–186.
+- Tarjan, R. (1972). Depth-first search and linear graph algorithms. *SIAM Journal on Computing*, 1(2), 146–160.
+- Wilson, E. B. (1927). Probable inference, the law of succession, and statistical inference. *Journal of the American Statistical Association*, 22(158), 209–212.
