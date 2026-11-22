@@ -31,7 +31,7 @@ Năm điều rút ra:
 - **Thứ tự thời gian lọc bớt nhiễu nhưng không phải tín hiệu chính.** Thêm điều kiện thời gian nâng precision từ 43,8% lên 54,9%. Tuy vậy, số vòng đúng thứ tự không cao hơn mức xáo trộn thời gian ngẫu nhiên (40 so với trung bình 35,54; p = 0,188).
 - **Đơn vị độc lập là ring, không phải giao dịch.** 19 vòng toàn rửa tiền trên test đến từ 4 ring, trong đó hai ring chiếm 17 vòng. Precision 54,9% vì vậy phải đọc cùng con số "4 ring".
 
-## 2. Bài làm gì, theo thứ tự
+## 2. Bước làm
 
 | Bước | Notebook | Làm gì | Ghi ra |
 |---|---|---|---|
