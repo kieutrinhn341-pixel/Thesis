@@ -5,8 +5,6 @@
 
 Khóa luận tốt nghiệp K65 · Nguyễn Thị Kiều Trinh
 
-> **Trạng thái:** các con số trong README lấy từ lần chạy notebook ngày 15/11/2026 (`reports/`). Sau khi đóng băng, mọi số liệu cuối cùng nằm trong `reports/results_final.csv`, và khóa luận chỉ chép số từ file đó.
-
 ---
 
 ## 1. Phát biểu vấn đề
