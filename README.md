@@ -64,7 +64,7 @@ Năm điều rút ra:
 
 Nguồn: [`rq1_account_metrics.csv`](reports/rq1/rq1_account_metrics.csv), hình [`rq1_account_precision_test.png`](reports/rq1/rq1_account_precision_test.png).
 
-- **Kết luận theo tiêu chí đã chốt: Điều chỉnh** cho cả hai hướng (thắng B1 ở 3/3 mức, thắng B3 ở 0/3).
+- **Kết luận: Điều chỉnh** cho cả hai hướng (thắng B1 ở 3/3 mức, thắng B3 ở 0/3).
 - **Fan-out mạnh hơn fan-in ở đầu danh sách.** Biến thể chính được chọn theo AP (toàn bảng xếp hạng) nên là fan-in. Kết quả fan-out được báo cáo nguyên trạng, không chọn lại theo test.
 - **Cửa sổ ngắn chỉ cắt bớt thông tin.** Fan-out top 0,1%: 24h 23,99% < 48h 31,50% < 96h 33,32% = B3. Trên dev cũng vậy: 48h 15,43%, B3 17,55%.
 - **Vì sao cửa sổ ≈ bậc** ([`rq1_window_vs_degree.csv`](reports/rq1/rq1_window_vs_degree.csv)).
@@ -330,33 +330,6 @@ Nguồn: [`graph_summary.csv`](reports/tables/graph_summary.csv), [`graph_degree
 6. Biến thể chính của RQ1 chọn theo AP (toàn bảng xếp hạng), trong khi câu hỏi quan tâm đầu danh sách.
 7. Dữ liệu tổng hợp: các tỷ lệ (ví dụ 86,6% rửa tiền đi qua ACH) phản ánh bộ mô phỏng, không suy rộng ra thực tế.
 
-Ngoài phạm vi: chuỗi chuyển tiếp và tài khoản *money mule* (PS3), *scatter-gather* (PS4), đường cong chia sẻ dữ liệu liên ngân hàng đầy đủ, học máy và GNN, các bộ HI-Medium và LI.
-
-## 7. Chạy lại
-
-```bash
-pip install -r requirements.txt
-```
-
-Chạy `01` → `06` theo thứ tự ở mục 2, mỗi notebook bằng *Restart & Run All*, không cần sửa code.
-
-| Biến môi trường | Ý nghĩa | Notebook |
-|---|---|---|
-| `HI_SMALL_ROOT` | Thư mục dự án, nơi ghi `data/processed/` và `reports/` | 01–06 |
-| `HI_SMALL_TRANS` | Đường dẫn tới `HI-Small_Trans.csv` | 01 |
-| `HI_SMALL_PATTERNS` | Đường dẫn tới `HI-Small_Patterns.txt` | 01, 04 |
-| `HI_SMALL_ACCOUNTS` | Đường dẫn tới `HI-Small_accounts.csv` | 02, 03 |
-| `HI_SMALL_DUCKDB_MEMORY` | Giới hạn bộ nhớ DuckDB (mặc định `2GB`) | 02–05 |
-
-Không đặt biến môi trường thì notebook tự tìm thư mục dự án: `/kaggle/working`, thư mục hiện tại, thư mục cha, hoặc `IBM_HI_Small_EDA/` bên cạnh. File dữ liệu gốc được tìm trong `data/raw/`, thư mục dự án và thư mục cha. Dữ liệu gốc và `data/` không đưa lên repo (xem `.gitignore`).
-
-**Bảng số liệu cuối cùng.** `06_results_final.ipynb` ghi mỗi con số thành một dòng của `results_final.csv`, gồm:
-- `key` và mục khóa luận dùng con số;
-- mô tả, giá trị gốc, khoảng Wilson nếu có, đơn vị;
-- giá trị định dạng kiểu Việt để dán vào bài;
-- file nguồn.
-
-Notebook kiểm tra chéo 51 cặp số lẽ ra phải bằng nhau giữa các notebook. Có cặp không khớp nghĩa là còn notebook chưa chạy lại; khi đó file không được ghi. `results_final_sources.csv` lưu SHA-256 của từng file nguồn.
 
 ### Cấu trúc thư mục
 
